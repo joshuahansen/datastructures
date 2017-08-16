@@ -135,6 +135,15 @@ bool loadCustomList(std::ifstream *textFile, std::ifstream *dictionary, std::ofs
 {
 	custom_list dictionaryList;
 	custom_list textList;
+	std::map<std::string, int> wordCount;
+	
+	std::ofstream wordCountFile;
+       	wordCountFile.open("word_count.csv");	
+	if(!wordCountFile)
+	{
+		std::cout << "Could not open word_count.csv for writing" << std::endl;
+		exit(0);
+	}
 	
 	std::string newString;
 	
@@ -155,10 +164,12 @@ bool loadCustomList(std::ifstream *textFile, std::ifstream *dictionary, std::ofs
 		dictionaryList.addNode(newString);
 	}
 	dictionary->close();
+
+//	textList.print();
+	textList.checkList(&dictionaryList, &wordCountFile);
 	
-	textList.print();
 	
-	dictionaryList.print();
+//	dictionaryList.print();
 
 	return true;
 }
@@ -299,7 +310,16 @@ bool checkVector(std::vector<std::string> *text, std::vector<std::string> *dict,
 {
 	std::map<std::string, int> wordCount;
 	std::string textString;
-	std::string dictString;	
+	std::string dictString;
+	
+	std::ofstream wordCountFile;
+       	wordCountFile.open("word_count.csv");	
+	if(!wordCountFile)
+	{
+		std::cout << "Could not open word_count.csv for writing" << std::endl;
+		exit(0);
+	}
+
 	for(size_t i = 0; i < text->size(); i++)
 	{
 		textString = (*text)[i];
@@ -313,14 +333,14 @@ bool checkVector(std::vector<std::string> *text, std::vector<std::string> *dict,
 				uniqueString = wordCount.insert(std::pair<std::string, int>(textString, 1));
 				if(uniqueString.second == false)
 				{
-					++wordCount[dictString];
+					++wordCount[textString];
 				}
 			}
 		}
 	} 
 	for (std::map<std::string, int>::iterator it= wordCount.begin(); it!= wordCount.end(); ++it)
 	{
-    		*outputFile << it->first << ": " << it->second << '\n';
+    		wordCountFile << it->first << ": " << it->second << '\n';
 	}
 	return true;
 }

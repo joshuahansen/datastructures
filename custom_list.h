@@ -12,6 +12,8 @@
 #include <memory>
 #include <iostream>
 #include <boost/tokenizer.hpp>
+#include <boost/algorithm/string.hpp>
+#include <map>
 
 class custom_list 
 {
@@ -60,6 +62,7 @@ class custom_list
 	bool addNode(std::string data)
 	{
 		node *current, *previous = nullptr;
+		transform(data.begin(), data.end(), data.begin(),::tolower);
 		std::unique_ptr<node> newNode = std::make_unique<node>(data);
 
 		if(head == nullptr)
@@ -130,15 +133,39 @@ class custom_list
 	{
 		return current->getNext();
 	}
-	std::map<std::string, int> checkWords(std::ifstream *dict, std::ifstream *text)
+	void checkList(custom_list *dict, std::ofstream *wordCountFile)
 	{
 		std::map<std::string, int> wordCount;
-		node *current = head.get();
-		while(current != nullptr)
-		{
+		node *textCurrent = head.get();
+		node *dictCurrent = dict->getHead();
+		std::string textString;
+		std::string dictString;
 
+		while(textCurrent != nullptr)
+		{
+			textString = textCurrent->getData();
+			dictCurrent = dict->getHead();
+			while(dictCurrent != nullptr)
+			{
+				dictString = dictCurrent->getData();
+				transform(textString.begin(), textString.end(), textString.begin(),::tolower);
+				if(textString == dictString)
+				{
+					std::pair<std::map<std::string, int>::iterator,bool> uniqueString;
+					uniqueString = wordCount.insert(std::pair<std::string, int>(textString, 1));
+					if(uniqueString.second == false)
+					{
+						++wordCount[textString];
+					}
+				}
+				dictCurrent = dictCurrent->getNext();
+			}
+			textCurrent = textCurrent->getNext();
 		}
-		return wordCount;
+		for(std::map<std::string, int>::iterator it = wordCount.begin(); it != wordCount.end(); ++it)
+		{
+			*wordCountFile << it->first << ": " << it->second << "\n";
+		}
 	}
 };
 #endif
