@@ -1,3 +1,10 @@
+#######################################################################
+#	COSC1254 - PROGRAMMING USING C++
+#	SEMESTER 1 2017
+#	ASSIGNMENT 1 - DATA STRUCTURES
+#	NAME:		JOSHUA HANSEN
+#	STUDENT NUMBER: S3589185
+########################################################################
 CC = g++
 CFLAGS = -Wall -pedantic -std=c++14
 DICT = -d files/dict.dat

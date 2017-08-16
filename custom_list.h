@@ -1,3 +1,11 @@
+/***********************************************************************
+*	COSC1254 - PROGRAMMING USING C++
+*	SEMESTER 1 2017
+*	ASSIGNMENT 1 - DATA STRUCTURES
+*	NAME:		JOSHUA HANSEN
+*	STUDENT NUMBER: S3589185
+************************************************************************/
+
 #ifndef CUSTOM_LIST_H
 #define CUSTOM_LIST_H
 
@@ -34,7 +42,7 @@ class custom_list
 		}
 		std::string getData()
 		{
-			return data;
+		return data;
 		}
 		friend custom_list;
 	};

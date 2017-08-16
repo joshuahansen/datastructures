@@ -1,3 +1,11 @@
+/***********************************************************************
+*	COSC1254 - PROGRAMMING USING C++
+*	SEMESTER 1 2017
+*	ASSIGNMENT 1 - DATA STRUCTURES
+*	NAME:		JOSHUA HANSEN
+*	STUDENT NUMBER: S3589185
+************************************************************************/
+
 #ifndef CUSTOM_TREE_H
 #define CUSTOM_TREE_H
 
