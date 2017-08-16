@@ -76,6 +76,7 @@ class custom_tree
 	bool addNode(std::string data)
 	{
 		node *current;
+		transform(data.begin(), data.end(), data.begin(),::tolower);
 		std::unique_ptr<node> newNode = std::make_unique<node>(data);
 
 		if(root == nullptr)
@@ -141,9 +142,65 @@ class custom_tree
 			print(currentNode->getRight());
 		}
 	}
-	bool search()
+	node *search(node *currentNode, std::string searchString)
 	{
-		return false;
+		if(currentNode == nullptr)
+		{
+			return nullptr;
+		}
+		else if(currentNode->getData() == searchString)
+		{
+			return currentNode;
+		}
+		else if(currentNode->getData() < searchString)
+		{
+			search(currentNode->getLeft(), searchString);
+			return nullptr;
+		}
+		else// if(currentNode->getData() > searchString)
+		{
+			search(currentNode->getRight(), searchString);
+			return nullptr;
+		}
+				
+	}
+	node *checkFullTree(node *currentNode, node *dictRoot, std::map<std::string, int> *wordCount)
+	{
+		node *match = search(dictRoot, currentNode->getData());
+		
+		if(match != nullptr)
+		{
+			wordCount->insert(std::pair<std::string, int>(match->getData(), match->getNoReps()));
+
+			return nullptr;
+		}
+		else if(currentNode != nullptr)
+		{
+			//print left branch
+			checkFullTree(currentNode->getLeft(), dictRoot, wordCount);
+
+			//print right branch
+			checkFullTree(currentNode->getRight(), dictRoot, wordCount);
+			return nullptr;
+		}
+		else
+		{
+			return currentNode;
+		}
+	}
+	void checkTree(custom_tree *dict, std::ofstream *wordCountFile)
+	{
+		std::map<std::string, int> wordCount;
+		node *textCurrent = root.get();
+		node *dictCurrent = dict->getRoot();
+		
+		node *matchedString = checkFullTree(textCurrent, dictCurrent, &wordCount);
+		
+		for(std::map<std::string, int>::iterator map_iter = wordCount.begin(); map_iter != wordCount.end(); ++map_iter)
+		{
+			*wordCountFile << map_iter->first << ": " << map_iter->second << "\n";
+		}
+
 	}
 };
 #endif

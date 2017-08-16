@@ -177,6 +177,14 @@ bool loadCustomTree(std::ifstream *textFile, std::ifstream *dictionary)
 {
 	custom_tree textTree;
 	custom_tree dictionaryTree;
+	
+	std::ofstream wordCountFile;
+       	wordCountFile.open("word_count.csv");	
+	if(!wordCountFile)
+	{
+		std::cout << "Could not open word_count.csv for writing" << std::endl;
+		exit(0);
+	}
 
 	std::string newString;
 	typedef	boost::tokenizer<boost::char_separator<char>> tokenizer;
@@ -193,15 +201,11 @@ bool loadCustomTree(std::ifstream *textFile, std::ifstream *dictionary)
 	textFile->close();
 	while(*dictionary >> newString)
 	{
-		std::cout << "\nDEBUG: " << newString << std::endl;
 		dictionaryTree.addNode(newString);
 	}
 	dictionary->close();
 	
-	std::cout << "Text file list" << std::endl;
-	textTree.print(textTree.getRoot());
-	std::cout << "Dictionary file list" << std::endl;
-	dictionaryTree.print(dictionaryTree.getRoot());
+	textTree.checkTree(&dictionaryTree, &wordCountFile);
 
 	return false;
 }

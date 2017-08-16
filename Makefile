@@ -29,7 +29,7 @@ custom_list:
 	$(RUN)$(PROG) $(CUSTOM_LIST) $(DICT) $(TEST_FILE) $(OUTPUT)
 
 custom_tree:
-	$(RUN)$(PROG) $(CUSTOM_TREE) $(DICT) $(FILE_2) $(OUTPUT)
+	$(RUN)$(PROG) $(CUSTOM_TREE) $(DICT) $(TEST_FILE) $(OUTPUT)
 
 vector:
 	$(RUN)$(PROG) $(VECTOR) $(DICT) $(TEST_FILE) $(OUTPUT)
