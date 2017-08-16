@@ -28,7 +28,7 @@ bool loadCustomTree(std::ifstream *textFile, std::ifstream *dictionary);
 bool loadVector(std::ifstream *textFile, std::ifstream *dictionary, std::ofstream *outputFile);
 bool loadSet(std::ifstream *textFile, std::ifstream *dictionary, std::ofstream *outputFile);
 bool loadList(std::ifstream *textFile, std::ifstream *dictionary, std::ofstream *outputFile);
-bool checkVector(std::vector<std::string> *text, std::vector<std::string> *dict);
+bool checkVector(std::vector<std::string> *text, std::vector<std::string> *dict, std::ofstream *outputFile);
 
 int main(int argc, char* argv[])
 {
@@ -52,8 +52,6 @@ int main(int argc, char* argv[])
 	
 		loadDatastruct(datastruct, &dictionary, &textFile, &outputFile, ds);	
 	}
-	
-	return 0;
 }
 
 bool loadFiles(int argc, char* argv[], std::string *datastruct, std::ifstream *dictionary, 
@@ -102,6 +100,7 @@ bool loadFiles(int argc, char* argv[], std::string *datastruct, std::ifstream *d
 						exit(1);
 					}
 					break;
+
 			}
 		}
 	}
@@ -157,24 +156,8 @@ bool loadCustomList(std::ifstream *textFile, std::ifstream *dictionary, std::ofs
 	}
 	dictionary->close();
 	
-	//std::cout << "DEBUG: Text file list" << std::endl;
-	//textList.print(outputFile);
-	
-	//custom_list tokens = textList.tokenizeList();
-	
-	std::cout << "DEBUG: Text file list" << std::endl;
 	textList.print();
 	
-	//std::cout << "TOKENS" << std::endl;
-	//std::cout << "DEBUG:========================================================" << std::endl;
-	//tokens.print(outputFile);
-	//tokens.print();
-
-
-	std::cout << "DEBUG:========================================================" << std::endl;
-	
-	std::cout << "DEBUG: Dictionary file list" << std::endl;
-	//dictionaryList.print(outputFile);
 	dictionaryList.print();
 
 	return true;
@@ -232,7 +215,7 @@ bool loadVector(std::ifstream *textFile, std::ifstream *dictionary, std::ofstrea
 			text.push_back(*tok_iter);
 		}
 	}
-	checkVector(&text, &dict);
+	checkVector(&text, &dict, outputFile);
 	return true;
 }
 bool loadSet(std::ifstream *textFile, std::ifstream *dictionary, std::ofstream *outputFile)
@@ -312,7 +295,7 @@ bool loadList(std::ifstream *textFile, std::ifstream *dictionary, std::ofstream 
 	}
 	return true;
 }
-bool checkVector(std::vector<std::string> *text, std::vector<std::string> *dict)
+bool checkVector(std::vector<std::string> *text, std::vector<std::string> *dict, std::ofstream *outputFile)
 {
 	std::map<std::string, int> wordCount;
 	std::string textString;
@@ -320,23 +303,24 @@ bool checkVector(std::vector<std::string> *text, std::vector<std::string> *dict)
 	for(size_t i = 0; i < text->size(); i++)
 	{
 		textString = (*text)[i];
+		transform(textString.begin(), textString.end(), textString.begin(),::tolower);
 		for(size_t i = 0; i < dict->size(); i++)
 		{
 			dictString = (*dict)[i];
-			if(boost::iequals(textString, dictString) == 0)
+			if(textString == dictString)
 			{
 				std::pair<std::map<std::string,int>::iterator,bool> uniqueString;
 				uniqueString = wordCount.insert(std::pair<std::string, int>(textString, 1));
 				if(uniqueString.second == false)
 				{
-					++wordCount[textString];
+					++wordCount[dictString];
 				}
 			}
 		}
 	} 
 	for (std::map<std::string, int>::iterator it= wordCount.begin(); it!= wordCount.end(); ++it)
 	{
-    		std::cout << it->first << ": " << it->second << '\n';
+    		*outputFile << it->first << ": " << it->second << '\n';
 	}
 	return true;
 }

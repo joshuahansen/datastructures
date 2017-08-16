@@ -11,6 +11,7 @@ DICT = -d files/dict.dat
 FILE_1 = -t files/big.txt
 FILE_2 = -t files/kaddath.txt
 FILE_3 = -t files/kjv.txt
+TEST_FILE = -t prac_files/text.txt
 OUTPUT = -o files/output.txt
 MAIN = datastructures.cpp
 PROG = test_datastructures
@@ -31,7 +32,7 @@ custom_tree:
 	$(RUN)$(PROG) $(CUSTOM_TREE) $(DICT) $(FILE_2) $(OUTPUT)
 
 vector:
-	$(RUN)$(PROG) $(VECTOR) $(DICT) $(FILE_2) $(OUTPUT)
+	$(RUN)$(PROG) $(VECTOR) $(DICT) $(TEST_FILE) $(OUTPUT)
 
 set:
 	$(RUN)$(PROG) $(SET) $(DICT) $(FILE_2) $(OUTPUT)

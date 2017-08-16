@@ -1,3 +1,9 @@
 This is a test text file
 to test reading in lines
-& it needs $ to @ be able_to get rid3 of mistake$ 
+& it needs $ to @ be able_to get rid3 of mistake$
+I dont know what i should be writing here or if this will even work
+i guess it is a good time to practice my touch typing as i am just writing rubbish.
+this is a lot harder than i thought but i really should practice as it would help speed up my typing. 
+It would also really help when i go for a security job as it requires fast typing and would make programing a lot easier
+That is all that i am going to type here so hopefully i can get this program to work how i want it to work,
+I should have, use. some ! more # symbols in this to get it to tokenize better! 

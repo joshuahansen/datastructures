@@ -99,7 +99,7 @@ class custom_list
 		if(outputFile->is_open())
 		{
 			node *current = head.get();
-			while(current != NULL)
+			while(current != nullptr)
 			{
 			
 			*outputFile << current->getData() << "\n";
@@ -110,7 +110,7 @@ class custom_list
 	void print()
 	{
 		node *current = head.get();
-		while(current != NULL)
+		while(current != nullptr)
 		{
 			
 			std::cout << current->getData() << std::endl;
@@ -129,6 +129,16 @@ class custom_list
 	node *getNextNode(node* current)
 	{
 		return current->getNext();
+	}
+	std::map<std::string, int> checkWords(std::ifstream *dict, std::ifstream *text)
+	{
+		std::map<std::string, int> wordCount;
+		node *current = head.get();
+		while(current != nullptr)
+		{
+
+		}
+		return wordCount;
 	}
 };
 #endif
