@@ -48,7 +48,7 @@ class custom_list
 		}
 		friend custom_list;
 	};
-
+	
 	std::size_t size;
 	std::unique_ptr<node> head;
 
@@ -57,12 +57,13 @@ class custom_list
 	custom_list()
 	{
 		head = nullptr;
+		size = 0;
 	}
 
 	bool addNode(std::string data)
 	{
 		node *current, *previous = nullptr;
-		transform(data.begin(), data.end(), data.begin(),::tolower);
+		boost::algorithm::to_lower(data);
 		std::unique_ptr<node> newNode = std::make_unique<node>(data);
 
 		if(head == nullptr)
@@ -96,7 +97,23 @@ class custom_list
 		size++;
 		return true;
 	}
+	bool push_front(std::string data)
+	{
+		boost::algorithm::to_lower(data);	
+		std::unique_ptr<node> newNode = std::make_unique<node>(data);
 
+		if(head == nullptr)
+		{
+			head = std::move(newNode);
+			size++;
+			return true;
+		}
+
+		newNode->setNext(std::move(head));
+		head = std::move(newNode);
+		size++;
+		return true;
+	}
 	void print(std::ofstream *outputFile)
 	{
 		if(outputFile->is_open())
@@ -120,10 +137,9 @@ class custom_list
 			current = current->getNext();
 		}
 	}
-	bool search(std::string searchString)
+	void printSize()
 	{
-		//find node and print
-		return true;
+		std::cout << "Length of list " << size << std::endl;
 	}
 	node *getHead()
 	{
@@ -140,15 +156,16 @@ class custom_list
 		node *dictCurrent = dict->getHead();
 		std::string textString;
 		std::string dictString;
+		bool match;
 
 		while(textCurrent != nullptr)
 		{
+			match = false;
 			textString = textCurrent->getData();
 			dictCurrent = dict->getHead();
 			while(dictCurrent != nullptr)
 			{
 				dictString = dictCurrent->getData();
-				transform(textString.begin(), textString.end(), textString.begin(),::tolower);
 				if(textString == dictString)
 				{
 					std::pair<std::map<std::string, int>::iterator,bool> uniqueString;
@@ -156,10 +173,16 @@ class custom_list
 					if(uniqueString.second == false)
 					{
 						++wordCount[textString];
+						match = true;
 					}
+					break;
 				}
 				dictCurrent = dictCurrent->getNext();
 			}
+	/*		if(match == false)
+			{
+				*wordCountFile << textString << " not found\n";
+			}*/
 			textCurrent = textCurrent->getNext();
 		}
 		for(std::map<std::string, int>::iterator it = wordCount.begin(); it != wordCount.end(); ++it)

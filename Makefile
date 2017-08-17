@@ -6,7 +6,7 @@
 #	STUDENT NUMBER: S3589185
 ########################################################################
 CC = g++
-CFLAGS = -Wall -pedantic -std=c++14
+CFLAGS = -Wall -pedantic -std=c++14 -lboost_system -lboost_program_options
 DICT = -d files/dict.dat
 FILE_1 = -t files/big.txt
 FILE_2 = -t files/kaddath.txt
@@ -24,15 +24,17 @@ LIST = -s list
 
 make:
 	$(CC) -o $(PROG) $(MAIN) $(CFLAGS)
+debug:
+	$(CC) -g -o $(PROG) $(MAIN) $(CFLAGS)
 
 custom_list:
-	$(RUN)$(PROG) $(CUSTOM_LIST) $(DICT) $(TEST_FILE) $(OUTPUT)
+	$(RUN)$(PROG) $(CUSTOM_LIST) $(DICT) $(FILE_3) $(OUTPUT)
 
 custom_tree:
 	$(RUN)$(PROG) $(CUSTOM_TREE) $(DICT) $(TEST_FILE) $(OUTPUT)
 
 vector:
-	$(RUN)$(PROG) $(VECTOR) $(DICT) $(TEST_FILE) $(OUTPUT)
+	$(RUN)$(PROG) $(VECTOR) $(DICT) $(FILE_1) $(OUTPUT)
 
 set:
 	$(RUN)$(PROG) $(SET) $(DICT) $(FILE_2) $(OUTPUT)

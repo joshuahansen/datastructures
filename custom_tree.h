@@ -144,21 +144,26 @@ class custom_tree
 	}
 	node *search(node *currentNode, std::string searchString)
 	{
+		std::cout << "SEARCH" << std::endl;
 		if(currentNode == nullptr)
 		{
+			std::cout << "REACHED END OF TREE" << std::endl;
 			return nullptr;
 		}
 		else if(currentNode->getData() == searchString)
 		{
+			std::cout << "MATCHED" << std::endl;
 			return currentNode;
 		}
 		else if(currentNode->getData() < searchString)
 		{
+			std::cout << "SEARCH LEFT" << std::endl;
 			search(currentNode->getLeft(), searchString);
 			return nullptr;
 		}
 		else// if(currentNode->getData() > searchString)
 		{
+			std::cout << "SEARCH RIGHT" << std::endl;
 			search(currentNode->getRight(), searchString);
 			return nullptr;
 		}

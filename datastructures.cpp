@@ -14,16 +14,17 @@
 #include <set>
 #include <map>
 #include <boost/tokenizer.hpp>
+#include <boost/program_options.hpp>
 #include <boost/algorithm/string.hpp>
 #include "custom_list.h"
 #include "custom_tree.h"
 
 typedef std::array<std::string, 5> sArray5;
-bool loadFiles(int argc, char* argv[], std::string *datastruct, std::ifstream *dictionary, 
-		std::ifstream *textFile, std::ofstream *outputFile, const sArray5 ds);
+bool loadFiles(std::ifstream *dictionary, std::string dictOpt, std::ifstream *textFile,
+	       	std::string textOpt, std::ofstream *outputFile, std::string outputOpt);
 bool loadDatastruct(std::string datastruct, std::ifstream *dictionary, 
 		std::ifstream *textFile, std::ofstream *outputFile, const sArray5 ds);
-bool loadCustomList(std::ifstream *textFile, std::ifstream *dictionary, std::ofstream *outputfile);
+void loadCustomList(std::ifstream *textFile, std::ifstream *dictionary, std::ofstream *outputfile);
 bool loadCustomTree(std::ifstream *textFile, std::ifstream *dictionary);
 bool loadVector(std::ifstream *textFile, std::ifstream *dictionary, std::ofstream *outputFile);
 bool loadSet(std::ifstream *textFile, std::ifstream *dictionary, std::ofstream *outputFile);
@@ -44,65 +45,54 @@ int main(int argc, char* argv[])
 	else
 	{
 		std::string datastruct;
+		std::string dictOpt;
+		std::string textOpt;
+		std::string outputOpt;
 		std::ifstream dictionary;
 		std::ifstream textFile;
 		std::ofstream outputFile;
+
+		boost::program_options::options_description progOpt("Options");
+		progOpt.add_options()
+			(",s", boost::program_options::value<std::string>(&datastruct)->required(), "Datastructure")
+			(",d", boost::program_options::value<std::string>(&dictOpt)->required(), "Dictionary File")
+			(",t", boost::program_options::value<std::string>(&textOpt)->required(), "Text File")
+			(",o", boost::program_options::value<std::string>(&outputOpt)->required(), "Output File")
+			;
+		boost::program_options::variables_map vm;
+		boost::program_options::store(parse_command_line(argc, argv, progOpt), vm);
+		notify(vm);
 		
-		loadFiles(argc, argv, &datastruct, &dictionary, &textFile, &outputFile, ds);
+		loadFiles(&dictionary, dictOpt, &textFile, textOpt, &outputFile, outputOpt);
 	
 		loadDatastruct(datastruct, &dictionary, &textFile, &outputFile, ds);	
 	}
+	std::cout << "DEBUG: COMPLETE" << std::endl;
 }
-
-bool loadFiles(int argc, char* argv[], std::string *datastruct, std::ifstream *dictionary, 
-		std::ifstream *textFile, std::ofstream *outputFile, const sArray5 ds)
+bool loadFiles(std::ifstream *dictionary, std::string dictOpt,
+		std::ifstream *textFile, std::string textOpt, std::ofstream *outputFile, std::string outputOpt)
 {
-	const int nextArg = 1;
-
-	for(int i = 1; i < argc; i++)
+	dictionary->open(dictOpt);
+	if(!dictionary)
 	{
-		if(argv[i][0] == '-')
-		{
-			switch(argv[i][1]) {
-				case 's':
-					for(int j = 0; j < (int)ds.size(); j++)
-					{
-						if(argv[i + nextArg] == ds[j])
-						{
-							*datastruct = ds[j];
-						}
-					}
-					break;
-				case 'd':
-					dictionary->open(argv[i + nextArg]);
-					if(!dictionary)
-					{
-						std::cout << "Could not open " << argv[i + nextArg]
-							<< " for reading" << std::endl;
-						exit(1);
-					}
-					break;
-				case 't':
-					textFile->open(argv[i + nextArg]);
-					if(!textFile)
-					{
-						std::cout << "Could not open " << argv[i + nextArg]
-							<< " for reading" << std::endl;
-						exit(1);
-					}
-					break;
-				case 'o':
-					outputFile->open(argv[i + nextArg]);
-					if(!outputFile)
-					{
-						std::cout << "Could not open " << argv[i + nextArg] 
-							<< " for writting" << std::endl;
-						exit(1);
-					}
-					break;
+		std::cout << "Could not open " << dictOpt
+			<< " for reading" << std::endl;
+		exit(1);
+	}
+	textFile->open(textOpt);
+	if(!textFile)
+	{
+		std::cout << "Could not open " << textOpt
+			<< " for reading" << std::endl;
+		exit(1);
+	}
 
-			}
-		}
+	outputFile->open(outputOpt);
+	if(!outputFile)
+	{
+		std::cout << "Could not open " << outputOpt
+			<< " for writting" << std::endl;
+		exit(1);
 	}
 	return true;
 }
@@ -129,9 +119,10 @@ bool loadDatastruct(std::string datastruct, std::ifstream *dictionary,
 	{
 		loadVector(textFile, dictionary, outputFile);
 	}
+	std::cout << "DEBUG DATASTRUCTURE COMPLETE" << std::endl;
 	return true;
 }
-bool loadCustomList(std::ifstream *textFile, std::ifstream *dictionary, std::ofstream *outputFile) 
+void loadCustomList(std::ifstream *textFile, std::ifstream *dictionary, std::ofstream *outputFile) 
 {
 	custom_list dictionaryList;
 	custom_list textList;
@@ -150,28 +141,28 @@ bool loadCustomList(std::ifstream *textFile, std::ifstream *dictionary, std::ofs
 	typedef	boost::tokenizer<boost::char_separator<char>> tokenizer;
 	boost::char_separator<char> sep(" 1234567890!@#$%^&*()_+=[]{}\\|;:\'\"<>,./?");
 	
-	while(std::getline(*textFile, newString, '\n'))
-	{
-		tokenizer toks{newString, sep};
-		for(tokenizer::iterator tok_iter = toks.begin(); tok_iter != toks.end(); tok_iter++)
-		{
-			textList.addNode(*tok_iter);
-		}
-	}
-	textFile->close();
 	while(std::getline(*dictionary, newString, '\n'))
 	{
 		dictionaryList.addNode(newString);
 	}
 	dictionary->close();
+	std::cout << "DICTIONARY LIST" << std::endl;
+	dictionaryList.printSize();
 
-//	textList.print();
+	while(std::getline(*textFile, newString, '\n'))
+	{
+		tokenizer toks{newString, sep};
+		for(tokenizer::iterator tok_iter = toks.begin(); tok_iter != toks.end(); tok_iter++)
+		{
+			textList.push_front(*tok_iter);
+		}
+	}
+	textFile->close();
+	std::cout << "TEXT LIST" << std::endl;
+	textList.printSize();
+
 	textList.checkList(&dictionaryList, &wordCountFile);
-	
-	
-//	dictionaryList.print();
-
-	return true;
+	std::cout << "DEBUG: CUSTOM LIST COMPLETE" << std::endl;
 }
 bool loadCustomTree(std::ifstream *textFile, std::ifstream *dictionary)
 {
