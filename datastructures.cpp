@@ -24,8 +24,8 @@ bool loadFiles(std::ifstream *dictionary, std::string dictOpt, std::ifstream *te
 	       	std::string textOpt, std::ofstream *outputFile, std::string outputOpt);
 bool loadDatastruct(std::string datastruct, std::ifstream *dictionary, 
 		std::ifstream *textFile, std::ofstream *outputFile, const sArray5 ds);
-void loadCustomList(std::ifstream *textFile, std::ifstream *dictionary, std::ofstream *outputfile);
-bool loadCustomTree(std::ifstream *textFile, std::ifstream *dictionary);
+bool loadCustomList(std::ifstream *textFile, std::ifstream *dictionary, std::ofstream *outputfile);
+bool loadCustomTree(std::ifstream *textFile, std::ifstream *dictionary, std::ofstream *outputFile);
 bool loadVector(std::ifstream *textFile, std::ifstream *dictionary, std::ofstream *outputFile);
 bool loadSet(std::ifstream *textFile, std::ifstream *dictionary, std::ofstream *outputFile);
 bool loadList(std::ifstream *textFile, std::ifstream *dictionary, std::ofstream *outputFile);
@@ -101,40 +101,32 @@ bool loadDatastruct(std::string datastruct, std::ifstream *dictionary,
 {
 	if(datastruct == ds[0])
 	{
-		loadCustomList(textFile, dictionary, outputFile);
+		return loadCustomList(textFile, dictionary, outputFile);
 	}
 	else if(datastruct == ds[1])
 	{
-		loadCustomTree(textFile, dictionary);
+		return loadCustomTree(textFile, dictionary, outputFile);
 	}
 	else if(datastruct == ds[2])
 	{
-		loadList(textFile, dictionary, outputFile);
+		return loadList(textFile, dictionary, outputFile);
 	}
 	else if(datastruct == ds[3])
 	{
-		loadSet(textFile, dictionary, outputFile);
+		return loadSet(textFile, dictionary, outputFile);
 	}
 	else if(datastruct == ds[4])
 	{
-		loadVector(textFile, dictionary, outputFile);
+		return loadVector(textFile, dictionary, outputFile);
 	}
 	std::cout << "DEBUG DATASTRUCTURE COMPLETE" << std::endl;
-	return true;
+	return false;
 }
-void loadCustomList(std::ifstream *textFile, std::ifstream *dictionary, std::ofstream *outputFile) 
+bool loadCustomList(std::ifstream *textFile, std::ifstream *dictionary, std::ofstream *outputFile) 
 {
 	custom_list dictionaryList;
 	custom_list textList;
 	std::map<std::string, int> wordCount;
-	
-	std::ofstream wordCountFile;
-       	wordCountFile.open("word_count.csv");	
-	if(!wordCountFile)
-	{
-		std::cout << "Could not open word_count.csv for writing" << std::endl;
-		exit(0);
-	}
 	
 	std::string newString;
 	
@@ -143,7 +135,7 @@ void loadCustomList(std::ifstream *textFile, std::ifstream *dictionary, std::ofs
 	
 	while(std::getline(*dictionary, newString, '\n'))
 	{
-		dictionaryList.addNode(newString);
+		dictionaryList.push_front(newString);
 	}
 	dictionary->close();
 	std::cout << "DICTIONARY LIST" << std::endl;
@@ -161,22 +153,14 @@ void loadCustomList(std::ifstream *textFile, std::ifstream *dictionary, std::ofs
 	std::cout << "TEXT LIST" << std::endl;
 	textList.printSize();
 
-	textList.checkList(&dictionaryList, &wordCountFile);
-	std::cout << "DEBUG: CUSTOM LIST COMPLETE" << std::endl;
+	textList.checkList(&dictionaryList, outputFile);
+	return true;
 }
-bool loadCustomTree(std::ifstream *textFile, std::ifstream *dictionary)
+bool loadCustomTree(std::ifstream *textFile, std::ifstream *dictionary, std::ofstream *outputFile)
 {
 	custom_tree textTree;
 	custom_tree dictionaryTree;
 	
-	std::ofstream wordCountFile;
-       	wordCountFile.open("word_count.csv");	
-	if(!wordCountFile)
-	{
-		std::cout << "Could not open word_count.csv for writing" << std::endl;
-		exit(0);
-	}
-
 	std::string newString;
 	typedef	boost::tokenizer<boost::char_separator<char>> tokenizer;
 	boost::char_separator<char> sep(" 1234567890!@#$%^&*()_+=[]{}\\|;:\'\"<>,./?");
@@ -196,9 +180,9 @@ bool loadCustomTree(std::ifstream *textFile, std::ifstream *dictionary)
 	}
 	dictionary->close();
 	
-	textTree.checkTree(&dictionaryTree, &wordCountFile);
+	textTree.checkTree(&dictionaryTree, outputFile);
 
-	return false;
+	return true;
 }
 bool loadVector(std::ifstream *textFile, std::ifstream *dictionary, std::ofstream *outputFile)
 {

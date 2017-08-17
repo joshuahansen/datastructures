@@ -59,44 +59,6 @@ class custom_list
 		head = nullptr;
 		size = 0;
 	}
-
-	bool addNode(std::string data)
-	{
-		node *current, *previous = nullptr;
-		boost::algorithm::to_lower(data);
-		std::unique_ptr<node> newNode = std::make_unique<node>(data);
-
-		if(head == nullptr)
-		{
-			head = std::move(newNode);
-			size++;
-			return true;
-		}
-
-		current = head.get();
-
-		while(current && current->getData() < data)
-		{
-			previous = current;
-			current = current->getNext();
-		}
-		if(previous == nullptr)
-		{
-			newNode->setNext(std::move(head));
-			head = std::move(newNode);
-		}
-		else if(current == nullptr)
-		{
-			previous->setNext(std::move(newNode));
-		}
-		else
-		{
-			newNode->setNext(std::move(previous->getNextPointer()));
-			previous->setNext(std::move(newNode));
-		}
-		size++;
-		return true;
-	}
 	bool push_front(std::string data)
 	{
 		boost::algorithm::to_lower(data);	
@@ -149,9 +111,10 @@ class custom_list
 	{
 		return current->getNext();
 	}
-	void checkList(custom_list *dict, std::ofstream *wordCountFile)
+	void checkList(custom_list *dict, std::ofstream *outputFile)
 	{
 		std::map<std::string, int> wordCount;
+		std::map<std::string, int> noMatch;
 		node *textCurrent = head.get();
 		node *dictCurrent = dict->getHead();
 		std::string textString;
@@ -173,22 +136,39 @@ class custom_list
 					if(uniqueString.second == false)
 					{
 						++wordCount[textString];
-						match = true;
 					}
+					match = true;
 					break;
 				}
 				dictCurrent = dictCurrent->getNext();
 			}
-	/*		if(match == false)
+//			std::cout << match << " " << textString << " "  << dictString << std::endl;
+			if(match == false)
 			{
-				*wordCountFile << textString << " not found\n";
-			}*/
+				std::pair<std::map<std::string, int>::iterator,bool> uniqueString;
+				uniqueString = noMatch.insert(std::pair<std::string, int>(textString, 1));
+				if(uniqueString.second == false)
+				{
+					++noMatch[textString];
+				}
+			//	*outputFile << textString << " not found\n";
+			}
 			textCurrent = textCurrent->getNext();
 		}
-		for(std::map<std::string, int>::iterator it = wordCount.begin(); it != wordCount.end(); ++it)
+		*outputFile << "Word Count\n";
+		*outputFile << "==========\n";
+		std::map<std::string, int>::iterator map_iter;
+		for(map_iter = wordCount.begin(); map_iter != wordCount.end(); ++map_iter)
 		{
-			*wordCountFile << it->first << ": " << it->second << "\n";
+			*outputFile << map_iter->first << ": " << map_iter->second << "\n";
 		}
+		*outputFile << "\n\nFuzzy word list\n";
+		*outputFile << "===============\n";
+		for( map_iter = noMatch.begin(); map_iter != noMatch.end(); ++map_iter)
+		{
+			*outputFile << map_iter->first << " was not found in the dictionary. Similar words: "  << "\n";
+		}
+
 	}
 };
 #endif

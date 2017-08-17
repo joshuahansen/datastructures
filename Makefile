@@ -8,11 +8,12 @@
 CC = g++
 CFLAGS = -Wall -pedantic -std=c++14 -lboost_system -lboost_program_options
 DICT = -d files/dict.dat
+SHUF_DICT = -d files/shuf_dict.dat
 FILE_1 = -t files/big.txt
 FILE_2 = -t files/kaddath.txt
 FILE_3 = -t files/kjv.txt
 TEST_FILE = -t prac_files/text.txt
-OUTPUT = -o files/output.txt
+OUTPUT = -o files/word_count.csv
 MAIN = datastructures.cpp
 PROG = test_datastructures
 RUN = ./
@@ -28,10 +29,10 @@ debug:
 	$(CC) -g -o $(PROG) $(MAIN) $(CFLAGS)
 
 custom_list:
-	$(RUN)$(PROG) $(CUSTOM_LIST) $(DICT) $(FILE_3) $(OUTPUT)
+	$(RUN)$(PROG) $(CUSTOM_LIST) $(DICT) $(FILE_2) $(OUTPUT)
 
 custom_tree:
-	$(RUN)$(PROG) $(CUSTOM_TREE) $(DICT) $(TEST_FILE) $(OUTPUT)
+	$(RUN)$(PROG) $(CUSTOM_TREE) $(SHUF_DICT) $(FILE_1) $(OUTPUT)
 
 vector:
 	$(RUN)$(PROG) $(VECTOR) $(DICT) $(FILE_1) $(OUTPUT)

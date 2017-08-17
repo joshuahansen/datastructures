@@ -11,6 +11,7 @@
 
 #include <memory>
 #include <iostream>
+#include <boost/algorithm/string.hpp>
 
 class custom_tree
 {
@@ -59,6 +60,7 @@ class custom_tree
 			{
 				return NoReps;
 			}
+			friend custom_tree;
 	};
 
 	std::unique_ptr<node> root;
@@ -76,7 +78,7 @@ class custom_tree
 	bool addNode(std::string data)
 	{
 		node *current;
-		transform(data.begin(), data.end(), data.begin(),::tolower);
+		boost::algorithm::to_lower(data);
 		std::unique_ptr<node> newNode = std::make_unique<node>(data);
 
 		if(root == nullptr)
@@ -142,68 +144,63 @@ class custom_tree
 			print(currentNode->getRight());
 		}
 	}
-	node *search(node *currentNode, std::string searchString)
+	void search(node *currentNode, node *searchNode, std::map<std::string, int> *wordCount,
+		       	std::ofstream *outputFile, std::map<std::string, int> *noMatch)
 	{
-		std::cout << "SEARCH" << std::endl;
-		if(currentNode == nullptr)
+		if(currentNode->getData() == searchNode->getData())
 		{
-			std::cout << "REACHED END OF TREE" << std::endl;
-			return nullptr;
+			wordCount->insert(std::pair<std::string, int>(searchNode->getData(), searchNode->getNoReps()));
 		}
-		else if(currentNode->getData() == searchString)
+		else if(currentNode->getData() > searchNode->getData() && currentNode->getLeft() != nullptr)
 		{
-			std::cout << "MATCHED" << std::endl;
-			return currentNode;
+			search(currentNode->getLeft(), searchNode, wordCount, outputFile, noMatch);
 		}
-		else if(currentNode->getData() < searchString)
+		else if(currentNode->getData() < searchNode->getData() && currentNode->getRight() != nullptr)
 		{
-			std::cout << "SEARCH LEFT" << std::endl;
-			search(currentNode->getLeft(), searchString);
-			return nullptr;
-		}
-		else// if(currentNode->getData() > searchString)
-		{
-			std::cout << "SEARCH RIGHT" << std::endl;
-			search(currentNode->getRight(), searchString);
-			return nullptr;
-		}
-				
-	}
-	node *checkFullTree(node *currentNode, node *dictRoot, std::map<std::string, int> *wordCount)
-	{
-		node *match = search(dictRoot, currentNode->getData());
-		
-		if(match != nullptr)
-		{
-			wordCount->insert(std::pair<std::string, int>(match->getData(), match->getNoReps()));
-
-			return nullptr;
-		}
-		else if(currentNode != nullptr)
-		{
-			//print left branch
-			checkFullTree(currentNode->getLeft(), dictRoot, wordCount);
-
-			//print right branch
-			checkFullTree(currentNode->getRight(), dictRoot, wordCount);
-			return nullptr;
+			search(currentNode->getRight(), searchNode, wordCount, outputFile, noMatch);
 		}
 		else
 		{
-			return currentNode;
+			noMatch->insert(std::pair<std::string, int>(searchNode->getData(), searchNode->getNoReps()));
+//			*outputFile std::cout << "WORD: " << searchNode->getData() << " Not in dictionary\n";
+		}
+				
+	}
+	void checkFullTree(node *currentNode, node *dictRoot, std::map<std::string, int> *wordCount, 
+			std::ofstream *outputFile, std::map<std::string, int> *noMatch)
+	{
+		if(currentNode != nullptr)
+		{
+			search(dictRoot, currentNode, wordCount, outputFile, noMatch);
+		
+			//print left branch
+			checkFullTree(currentNode->getLeft(), dictRoot, wordCount, outputFile, noMatch);
+
+			//print right branch
+			checkFullTree(currentNode->getRight(), dictRoot, wordCount, outputFile, noMatch);
 		}
 	}
-	void checkTree(custom_tree *dict, std::ofstream *wordCountFile)
+	void checkTree(custom_tree *text, std::ofstream *outputFile)
 	{
 		std::map<std::string, int> wordCount;
-		node *textCurrent = root.get();
-		node *dictCurrent = dict->getRoot();
+		std::map<std::string, int> noMatch;
+		node *dictCurrent = root.get();
+		node *textCurrent = text->getRoot();
 		
-		node *matchedString = checkFullTree(textCurrent, dictCurrent, &wordCount);
+		checkFullTree(dictCurrent, textCurrent, &wordCount, outputFile, &noMatch);
 		
-		for(std::map<std::string, int>::iterator map_iter = wordCount.begin(); map_iter != wordCount.end(); ++map_iter)
+		std::map<std::string, int>::iterator map_iter;
+		*outputFile << "Word Count\n";
+		*outputFile << "==========\n";
+		for(map_iter = wordCount.begin(); map_iter != wordCount.end(); ++map_iter)
 		{
-			*wordCountFile << map_iter->first << ": " << map_iter->second << "\n";
+			*outputFile << map_iter->first << ": " << map_iter->second << "\n";
+		}
+		*outputFile << "\n\nFuzzy word list\n";
+		*outputFile << "===============\n";
+		for(map_iter = noMatch.begin(); map_iter != noMatch.end(); ++map_iter)
+		{
+			*outputFile << map_iter->first << " was not found in the dictionary.the closest matches were: \n";
 		}
 
 	}
