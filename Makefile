@@ -7,38 +7,45 @@
 ########################################################################
 CC = g++
 CFLAGS = -Wall -pedantic -std=c++14 -lboost_system -lboost_program_options
-DICT = -d files/dict.dat
-SHUF_DICT = -d files/shuf_dict.dat
-FILE_1 = -t files/big.txt
-FILE_2 = -t files/kaddath.txt
-FILE_3 = -t files/kjv.txt
-TEST_FILE = -t prac_files/text.txt
-OUTPUT = -o files/word_count.csv
+DFLAG = -d
+TFLAG = -t
+OFLAG = -o
+SFLAG = -s
+DICT = files/dict.dat
+SHUF_DICT = files/shuf_dict.dat
+FILE_1 = files/big.txt
+FILE_2 = files/kaddath.txt
+FILE_3 = files/kjv.txt
+TEST_FILE = prac_files/text.txt
+OUTPUT = files/word_count.csv
 MAIN = datastructures.cpp
 PROG = test_datastructures
 RUN = ./
-CUSTOM_LIST = -s custom_list
-CUSTOM_TREE = -s custom_tree
-VECTOR = -s vector
-SET = -s set
-LIST = -s list
+CUSTOM_LIST = custom_list
+CUSTOM_TREE = custom_tree
+VECTOR = vector
+SET = set
+LIST = list
 
 make:
-	$(CC) -o $(PROG) $(MAIN) $(CFLAGS)
+	$(CC) $(OFLAG) $(PROG) $(MAIN) $(CFLAGS)
 debug:
-	$(CC) -g -o $(PROG) $(MAIN) $(CFLAGS)
+	$(CC) -g $(OFLAG) $(PROG) $(MAIN) $(CFLAGS)
 
 custom_list:
-	$(RUN)$(PROG) $(CUSTOM_LIST) $(DICT) $(FILE_2) $(OUTPUT)
+	$(RUN)$(PROG) $(SFLAG) $(CUSTOM_LIST) $(DFLAG) $(DICT) $(TFLAG) $(FILE_2) $(OFLAG) $(OUTPUT)
 
 custom_tree:
-	$(RUN)$(PROG) $(CUSTOM_TREE) $(SHUF_DICT) $(FILE_1) $(OUTPUT)
+	$(RUN)$(PROG) $(SFLAG) $(CUSTOM_TREE) $(DFLAG) $(DICT) $(TFLAG) $(FILE_2) $(OFLAG) $(OUTPUT)
 
 vector:
-	$(RUN)$(PROG) $(VECTOR) $(DICT) $(FILE_1) $(OUTPUT)
+	$(RUN)$(PROG) $(SFLAG) $(VECTOR) $(DFLAG) $(DICT) $(TFLAG) $(FILE_2) $(OFLAG) $(OUTPUT)
 
 set:
-	$(RUN)$(PROG) $(SET) $(DICT) $(FILE_2) $(OUTPUT)
+	$(RUN)$(PROG) $(SFLAG) $(SET) $(DFLAG) $(DICT) $(TFLAG) $(FILE_2) $(OFLAG) $(OUTPUT)
 
 list:
-	$(RUN)$(PROG) $(LIST) $(DICT) $(FILE_2) $(OUTPUT)
+	$(RUN)$(PROG) $(SFLAG) $(LIST) $(DFLAG) $(DICT) $(TFLAG) $(FILE_1) $(OFLAG) $(OUTPUT)
+
+clean:
+	rm $(PROG) $(OUTPUT)

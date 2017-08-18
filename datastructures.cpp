@@ -5,31 +5,7 @@
 *	NAME:		JOSHUA HANSEN
 *	STUDENT NUMBER: S3589185
 ************************************************************************/
-
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <vector>
-#include <list>
-#include <set>
-#include <map>
-#include <boost/tokenizer.hpp>
-#include <boost/program_options.hpp>
-#include <boost/algorithm/string.hpp>
-#include "custom_list.h"
-#include "custom_tree.h"
-
-typedef std::array<std::string, 5> sArray5;
-bool loadFiles(std::ifstream *dictionary, std::string dictOpt, std::ifstream *textFile,
-	       	std::string textOpt, std::ofstream *outputFile, std::string outputOpt);
-bool loadDatastruct(std::string datastruct, std::ifstream *dictionary, 
-		std::ifstream *textFile, std::ofstream *outputFile, const sArray5 ds);
-bool loadCustomList(std::ifstream *textFile, std::ifstream *dictionary, std::ofstream *outputfile);
-bool loadCustomTree(std::ifstream *textFile, std::ifstream *dictionary, std::ofstream *outputFile);
-bool loadVector(std::ifstream *textFile, std::ifstream *dictionary, std::ofstream *outputFile);
-bool loadSet(std::ifstream *textFile, std::ifstream *dictionary, std::ofstream *outputFile);
-bool loadList(std::ifstream *textFile, std::ifstream *dictionary, std::ofstream *outputFile);
-bool checkVector(std::vector<std::string> *text, std::vector<std::string> *dict, std::ofstream *outputFile);
+#include "datastructures.h"
 
 int main(int argc, char* argv[])
 {
@@ -188,6 +164,7 @@ bool loadVector(std::ifstream *textFile, std::ifstream *dictionary, std::ofstrea
 {
 	std::vector<std::string> dict;
 	std::string newString;
+	std::string tempToken;
 	while(std::getline(*dictionary, newString, '\n'))
 	{
 		dict.push_back(newString);
@@ -202,7 +179,8 @@ bool loadVector(std::ifstream *textFile, std::ifstream *dictionary, std::ofstrea
 		tokenizer toks{newString, sep};
 		for(tokenizer::iterator tok_iter = toks.begin(); tok_iter != toks.end(); tok_iter++)
 		{
-			text.push_back(*tok_iter);
+			tempToken = *tok_iter;
+			text.push_back(tempToken);
 		}
 	}
 	checkVector(&text, &dict, outputFile);
@@ -210,11 +188,12 @@ bool loadVector(std::ifstream *textFile, std::ifstream *dictionary, std::ofstrea
 }
 bool loadSet(std::ifstream *textFile, std::ifstream *dictionary, std::ofstream *outputFile)
 {
-	std::cout << "DEBUG: LIST RINNING" << std::endl;
 	std::multiset<std::string> setDict;
 	std::string newString;
+	std::string tempToken;
 	while(std::getline(*dictionary, newString, '\n'))
 	{
+		boost::algorithm::to_lower(newString);	
 		setDict.insert(newString);
 	}
 
@@ -224,35 +203,24 @@ bool loadSet(std::ifstream *textFile, std::ifstream *dictionary, std::ofstream *
 
 	while(std::getline(*textFile, newString, '\n'))
 	{
-		std::cout << "DEBUG: " << newString << std::endl;
 		tokenizer toks{newString, sep};
 		for(tokenizer::iterator tok_iter = toks.begin(); tok_iter != toks.end(); tok_iter++)
 		{
+			tempToken = *tok_iter;
+			boost::algorithm::to_lower(tempToken);	
 			setText.insert(*tok_iter);
 		}
 	}
-	std::cout << "DEBUG: DICTIONARY SET" << std::endl;
-	std::cout << "DEBUG:===================================================" << std::endl;
-	for(std::multiset<std::string>::iterator set_iter = setDict.begin(); set_iter != setDict.end(); set_iter++)
-	{
-		std::cout << *set_iter << std::endl;
-	}
-	std::cout << "DEBUG: TEXT SET" << std::endl;
-	std::cout << "DEBUG:===================================================" << std::endl;
-	for(std::multiset<std::string>::iterator set_iter = setText.begin(); set_iter != setText.end(); set_iter++)
-	{
-		std::cout << *set_iter << std::endl;
-	}
+	checkSet(&setText, &setDict, outputFile);
 	return true;
 }
 bool loadList(std::ifstream *textFile, std::ifstream *dictionary, std::ofstream *outputFile)
 {
-	std::cout << "DEBUG: RUN LIST" << std::endl;
 	std::list<std::string> dict;
 	std::string newString;
+	std::string tempToken;
 	while(std::getline(*dictionary, newString, '\n'))
 	{
-		std::cout << "DEBUG: ADD TO DICTIONARY" << std::endl;
 		dict.push_front(newString);
 	}
 	std::list<std::string> text;
@@ -261,28 +229,15 @@ bool loadList(std::ifstream *textFile, std::ifstream *dictionary, std::ofstream 
 	
 	while(std::getline(*textFile, newString, '\n'))
 	{
-		std::cout << "DEBUG: ADD TO TEXT" << std::endl;
 		tokenizer toks{newString, sep};
 		for(tokenizer::iterator tok_iter = toks.begin(); tok_iter != toks.end(); tok_iter++)
 		{
-			std::cout << "DEBUG: TOKENIZE TEXT" << std::endl;
-			text.push_back(*tok_iter);
+			tempToken = *tok_iter;
+			boost::algorithm::to_lower(tempToken);	
+			text.push_front(*tok_iter);
 		}
 	}
-	
-	std::cout << "DEBUG: DICT LIST" << std::endl;
-	std::cout << "DEBUG:===================================================" << std::endl;
-	for(std::list<std::string>::iterator list_iter = dict.begin(); list_iter != dict.end(); list_iter++)
-	{
-		std::cout << *list_iter << std::endl;
-	}
-	
-	std::cout << "DEBUG: TEXT LIST" << std::endl;
-	std::cout << "DEBUG:===================================================" << std::endl;
-	for(std::list<std::string>::iterator list_iter = text.begin(); list_iter != text.end(); list_iter++)
-	{
-		std::cout << *list_iter << std::endl;
-	}
+	checkList(&text, &dict, outputFile);
 	return true;
 }
 bool checkVector(std::vector<std::string> *text, std::vector<std::string> *dict, std::ofstream *outputFile)
@@ -291,18 +246,9 @@ bool checkVector(std::vector<std::string> *text, std::vector<std::string> *dict,
 	std::string textString;
 	std::string dictString;
 	
-	std::ofstream wordCountFile;
-       	wordCountFile.open("word_count.csv");	
-	if(!wordCountFile)
-	{
-		std::cout << "Could not open word_count.csv for writing" << std::endl;
-		exit(0);
-	}
-
 	for(size_t i = 0; i < text->size(); i++)
 	{
 		textString = (*text)[i];
-		transform(textString.begin(), textString.end(), textString.begin(),::tolower);
 		for(size_t i = 0; i < dict->size(); i++)
 		{
 			dictString = (*dict)[i];
@@ -319,7 +265,65 @@ bool checkVector(std::vector<std::string> *text, std::vector<std::string> *dict,
 	} 
 	for (std::map<std::string, int>::iterator it= wordCount.begin(); it!= wordCount.end(); ++it)
 	{
-    		wordCountFile << it->first << ": " << it->second << '\n';
+    		*outputFile << it->first << ": " << it->second << '\n';
+	}
+	return true;
+}
+bool checkSet(std::multiset<std::string> *text, std::multiset<std::string> *dict, std::ofstream *outputFile)
+{
+	std::map<std::string, int> wordCount;
+	std::string textString;
+	std::string dictString;
+	
+	for(std::multiset<std::string>::iterator text_iter = text->begin(); text_iter != text->end(); text_iter++)
+	{
+		textString = *text_iter;
+		for(std::multiset<std::string>::iterator dict_iter = dict->begin(); dict_iter != dict->end(); dict_iter++)
+		{
+			dictString = *dict_iter;
+			if(textString == dictString)
+			{
+				std::pair<std::map<std::string,int>::iterator,bool> uniqueString;
+				uniqueString = wordCount.insert(std::pair<std::string, int>(textString, 1));
+				if(uniqueString.second == false)
+				{
+					++wordCount[textString];
+				}
+			}
+		}
+	} 
+	for (std::map<std::string, int>::iterator it= wordCount.begin(); it!= wordCount.end(); ++it)
+	{
+    		*outputFile << it->first << ": " << it->second << '\n';
+	}
+	return true;
+}
+bool checkList(std::list<std::string> *text, std::list<std::string> *dict, std::ofstream *outputFile)
+{
+	std::map<std::string, int> wordCount;
+	std::string textString;
+	std::string dictString;
+	
+	for(std::list<std::string>::iterator text_iter = text->begin(); text_iter != text->end(); text_iter++)
+	{
+		textString = *text_iter;
+		for(std::list<std::string>::iterator dict_iter = dict->begin(); dict_iter != dict->end(); dict_iter++)
+		{
+			dictString = *dict_iter;
+			if(textString == dictString)
+			{
+				std::pair<std::map<std::string,int>::iterator,bool> uniqueString;
+				uniqueString = wordCount.insert(std::pair<std::string, int>(textString, 1));
+				if(uniqueString.second == false)
+				{
+					++wordCount[textString];
+				}
+			}
+		}
+	} 
+	for (std::map<std::string, int>::iterator it= wordCount.begin(); it!= wordCount.end(); ++it)
+	{
+    		*outputFile << it->first << ": " << it->second << '\n';
 	}
 	return true;
 }
