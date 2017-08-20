@@ -136,14 +136,10 @@ bool loadCustomList(std::ifstream *textFile, std::ifstream *dictionary, std::ofs
 	std::cout << "TEXT LIST" << std::endl;
 	textList.printSize();
 
-	textList.checkList2(&dictionaryList, outputFile);
+	textList.checkList(&dictionaryList, outputFile);
 	auto finish = std::chrono::high_resolution_clock::now();
 	std::chrono::duration<double> elapsed = finish - start;
 	std::cout << "Time Elapsed: " << elapsed.count() << std::endl;
-
-/*	textList.printSize();
-	dictionaryList.printSize();
-	textList.print();*/
 	return true;
 }
 bool loadCustomTree(std::ifstream *textFile, std::ifstream *dictionary, std::ofstream *outputFile)

@@ -33,7 +33,7 @@ debug:
 	$(CC) -g $(OFLAG) $(PROG) $(MAIN) $(CFLAGS)
 
 custom_list:
-	$(RUN)$(PROG) $(SFLAG) $(CUSTOM_LIST) $(DFLAG) $(DICT) $(TFLAG) $(FILE_1) $(OFLAG) $(OUTPUT)
+	$(RUN)$(PROG) $(SFLAG) $(CUSTOM_LIST) $(DFLAG) $(DICT) $(TFLAG) $(FILE_3) $(OFLAG) $(OUTPUT)
 
 custom_tree:
 	$(RUN)$(PROG) $(SFLAG) $(CUSTOM_TREE) $(DFLAG) $(SHUF_DICT) $(TFLAG) $(FILE_1) $(OFLAG) $(OUTPUT)
