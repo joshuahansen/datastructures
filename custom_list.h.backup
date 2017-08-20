@@ -29,7 +29,7 @@ class custom_list
 			next = nullptr;
 		}
 
-		bool setNext(std::unique_ptr<node> newNode)
+		bool setNext(std::unique_ptr<node> && newNode)
 		{
 			next = std::move(newNode);
 			return true;
@@ -38,9 +38,13 @@ class custom_list
 		{
 			return next.get();
 		}
+		std::unique_ptr<node> &getNextPointer()
+		{
+			return next;
+		}
 		std::string getData()
 		{
-			return data;
+		return data;
 		}
 		friend custom_list;
 	};
@@ -55,7 +59,7 @@ class custom_list
 		head = nullptr;
 		size = 0;
 	}
-	void push_front(std::string data)
+	bool push_front(std::string data)
 	{
 		boost::algorithm::to_lower(data);	
 		std::unique_ptr<node> newNode = std::make_unique<node>(data);
@@ -64,15 +68,27 @@ class custom_list
 		{
 			head = std::move(newNode);
 			size++;
+			return true;
 		}
-		else
+
+		newNode->setNext(std::move(head));
+		head = std::move(newNode);
+		size++;
+		return true;
+	}
+	void print(std::ofstream *outputFile)
+	{
+		if(outputFile->is_open())
 		{
-			newNode->next = std::move(head);
-			head = std::move(newNode);
-			size++;
+			node *current = head.get();
+			while(current != nullptr)
+			{
+			
+			*outputFile << current->getData() << "\n";
+			current = current->getNext();
+			}
 		}
 	}
-	
 	void print()
 	{
 		node *current = head.get();
@@ -90,6 +106,10 @@ class custom_list
 	node *getHead()
 	{
 		return head.get();
+	}
+	node *getNextNode(node* current)
+	{
+		return current->getNext();
 	}
 	void checkList(custom_list *dict, std::ofstream *outputFile)
 	{
@@ -122,6 +142,7 @@ class custom_list
 				}
 				dictCurrent = dictCurrent->getNext();
 			}
+//			std::cout << match << " " << textString << " "  << dictString << std::endl;
 			if(match == false)
 			{
 				std::pair<std::map<std::string, int>::iterator,bool> uniqueString;
@@ -130,10 +151,10 @@ class custom_list
 				{
 					++noMatch[textString];
 				}
+			//	*outputFile << textString << " not found\n";
 			}
 			textCurrent = textCurrent->getNext();
 		}
-		std::cout << wordCount.size() << std::endl;
 		*outputFile << "Word Count\n";
 		*outputFile << "==========\n";
 		std::map<std::string, int>::iterator map_iter;
@@ -141,13 +162,13 @@ class custom_list
 		{
 			*outputFile << map_iter->first << ": " << map_iter->second << "\n";
 		}
-		std::cout << noMatch.size() << std::endl;
 		*outputFile << "\n\nFuzzy word list\n";
 		*outputFile << "===============\n";
 		for( map_iter = noMatch.begin(); map_iter != noMatch.end(); ++map_iter)
 		{
 			*outputFile << map_iter->first << " was not found in the dictionary. Similar words: "  << "\n";
 		}
+
 	}
 };
 #endif
