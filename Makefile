@@ -33,19 +33,19 @@ debug:
 	$(CC) -g $(OFLAG) $(PROG) $(MAIN) $(CFLAGS)
 
 custom_list:
-	$(RUN)$(PROG) $(SFLAG) $(CUSTOM_LIST) $(DFLAG) $(DICT) $(TFLAG) $(FILE_2) $(OFLAG) $(OUTPUT)
+	$(RUN)$(PROG) $(SFLAG) $(CUSTOM_LIST) $(DFLAG) $(DICT) $(TFLAG) $(FILE_1) $(OFLAG) $(OUTPUT)
 
 custom_tree:
-	$(RUN)$(PROG) $(SFLAG) $(CUSTOM_TREE) $(DFLAG) $(DICT) $(TFLAG) $(FILE_2) $(OFLAG) $(OUTPUT)
+	$(RUN)$(PROG) $(SFLAG) $(CUSTOM_TREE) $(DFLAG) $(SHUF_DICT) $(TFLAG) $(FILE_1) $(OFLAG) $(OUTPUT)
 
 vector:
-	$(RUN)$(PROG) $(SFLAG) $(VECTOR) $(DFLAG) $(DICT) $(TFLAG) $(FILE_2) $(OFLAG) $(OUTPUT)
+	$(RUN)$(PROG) $(SFLAG) $(VECTOR) $(DFLAG) $(DICT) $(TFLAG) $(FILE_3) $(OFLAG) $(OUTPUT)
 
 set:
-	$(RUN)$(PROG) $(SFLAG) $(SET) $(DFLAG) $(DICT) $(TFLAG) $(FILE_2) $(OFLAG) $(OUTPUT)
+	$(RUN)$(PROG) $(SFLAG) $(SET) $(DFLAG) $(DICT) $(TFLAG) $(FILE_3) $(OFLAG) $(OUTPUT)
 
 list:
-	$(RUN)$(PROG) $(SFLAG) $(LIST) $(DFLAG) $(DICT) $(TFLAG) $(FILE_1) $(OFLAG) $(OUTPUT)
+	$(RUN)$(PROG) $(SFLAG) $(LIST) $(DFLAG) $(DICT) $(TFLAG) $(FILE_3) $(OFLAG) $(OUTPUT)
 
 clean:
 	rm $(PROG) $(OUTPUT)
