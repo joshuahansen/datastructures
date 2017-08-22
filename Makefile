@@ -18,6 +18,7 @@ FILE_2 = files/kaddath.txt
 FILE_3 = files/kjv.txt
 TEST_FILE = prac_files/text.txt
 OUTPUT = files/word_count.csv
+OUTPUT2 = files/word_count2.csv
 MAIN = datastructures.cpp
 PROG = test_datastructures
 RUN = ./
@@ -33,19 +34,19 @@ debug:
 	$(CC) -g $(OFLAG) $(PROG) $(MAIN) $(CFLAGS)
 
 custom_list:
-	$(RUN)$(PROG) $(SFLAG) $(CUSTOM_LIST) $(DFLAG) $(DICT) $(TFLAG) $(FILE_3) $(OFLAG) $(OUTPUT)
+	$(RUN)$(PROG) $(SFLAG) $(CUSTOM_LIST) $(DFLAG) $(DICT) $(TFLAG) $(FILE_1) $(OFLAG) $(OUTPUT)
 
 custom_tree:
-	$(RUN)$(PROG) $(SFLAG) $(CUSTOM_TREE) $(DFLAG) $(SHUF_DICT) $(TFLAG) $(FILE_1) $(OFLAG) $(OUTPUT)
+	$(RUN)$(PROG) $(SFLAG) $(CUSTOM_TREE) $(DFLAG) $(SHUF_DICT) $(TFLAG) $(FILE_1) $(OFLAG) $(OUTPUT2)
 
 vector:
-	$(RUN)$(PROG) $(SFLAG) $(VECTOR) $(DFLAG) $(DICT) $(TFLAG) $(FILE_3) $(OFLAG) $(OUTPUT)
+	$(RUN)$(PROG) $(SFLAG) $(VECTOR) $(DFLAG) $(DICT) $(TFLAG) $(FILE_1) $(OFLAG) $(OUTPUT)
 
 set:
-	$(RUN)$(PROG) $(SFLAG) $(SET) $(DFLAG) $(DICT) $(TFLAG) $(FILE_3) $(OFLAG) $(OUTPUT)
+	$(RUN)$(PROG) $(SFLAG) $(SET) $(DFLAG) $(DICT) $(TFLAG) $(FILE_1) $(OFLAG) $(OUTPUT)
 
 list:
-	$(RUN)$(PROG) $(SFLAG) $(LIST) $(DFLAG) $(DICT) $(TFLAG) $(FILE_3) $(OFLAG) $(OUTPUT)
+	$(RUN)$(PROG) $(SFLAG) $(LIST) $(DFLAG) $(DICT) $(TFLAG) $(FILE_1) $(OFLAG) $(OUTPUT)
 
 clean:
 	rm $(PROG) $(OUTPUT)

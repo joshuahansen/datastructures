@@ -200,7 +200,7 @@ class custom_tree
 		*outputFile << "===============\n";
 		for(map_iter = noMatch.begin(); map_iter != noMatch.end(); ++map_iter)
 		{
-			*outputFile << map_iter->first << " was not found in the dictionary.the closest matches were: \n";
+			*outputFile << map_iter->first << " was not found in the dictionary. Similar words: "  << "\n";
 		}
 
 	}

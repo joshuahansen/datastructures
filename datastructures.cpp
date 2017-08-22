@@ -140,6 +140,7 @@ bool loadCustomList(std::ifstream *textFile, std::ifstream *dictionary, std::ofs
 	auto finish = std::chrono::high_resolution_clock::now();
 	std::chrono::duration<double> elapsed = finish - start;
 	std::cout << "Time Elapsed: " << elapsed.count() << std::endl;
+	textList.freeList();
 	return true;
 }
 bool loadCustomTree(std::ifstream *textFile, std::ifstream *dictionary, std::ofstream *outputFile)

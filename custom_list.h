@@ -42,11 +42,19 @@ class custom_list
 		{
 			return data;
 		}
+		void release()
+		{
+			if(next != nullptr)
+			{
+				next.reset();
+			}
+		}
 		friend custom_list;
 	};
 	
 	std::size_t size;
 	std::unique_ptr<node> head;
+	std::vector<node *> node_ptr;
 
 	public:
 
@@ -100,9 +108,10 @@ class custom_list
 		std::string textString;
 		std::string dictString;
 		bool match;
-
+		
 		while(textCurrent != nullptr)
 		{
+			node_ptr.push_back(textCurrent);
 			match = false;
 			textString = textCurrent->getData();
 			dictCurrent = dict->getHead();
@@ -148,6 +157,15 @@ class custom_list
 		{
 			*outputFile << map_iter->first << " was not found in the dictionary. Similar words: "  << "\n";
 		}
+	}
+	void freeList()
+	{
+		std::cout << "Free List" << std::endl;
+		for(int i = node_ptr.size() - 1; i > 0; --i)
+		{
+			node_ptr[i]->release();
+		}	
+		std::cout << "Free list complete" << std::endl;
 	}
 };
 #endif
