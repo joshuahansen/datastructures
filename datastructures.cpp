@@ -183,6 +183,7 @@ bool loadVector(std::ifstream *textFile, std::ifstream *dictionary, std::ofstrea
 	std::string tempToken;
 	while(std::getline(*dictionary, newString, '\n'))
 	{
+		boost::algorithm::to_lower(newString);	
 		dict.push_back(newString);
 	}
 	
@@ -192,6 +193,7 @@ bool loadVector(std::ifstream *textFile, std::ifstream *dictionary, std::ofstrea
 	
 	while(std::getline(*textFile, newString, '\n'))
 	{
+		boost::algorithm::to_lower(newString);	
 		tokenizer toks{newString, sep};
 		for(tokenizer::iterator tok_iter = toks.begin(); tok_iter != toks.end(); tok_iter++)
 		{
@@ -223,6 +225,7 @@ bool loadSet(std::ifstream *textFile, std::ifstream *dictionary, std::ofstream *
 
 	while(std::getline(*textFile, newString, '\n'))
 	{
+		boost::algorithm::to_lower(newString);	
 		tokenizer toks{newString, sep};
 		for(tokenizer::iterator tok_iter = toks.begin(); tok_iter != toks.end(); tok_iter++)
 		{
@@ -245,6 +248,7 @@ bool loadList(std::ifstream *textFile, std::ifstream *dictionary, std::ofstream 
 	std::string tempToken;
 	while(std::getline(*dictionary, newString, '\n'))
 	{
+		boost::algorithm::to_lower(newString);	
 		dict.push_front(newString);
 	}
 	std::list<std::string> text;
@@ -253,6 +257,7 @@ bool loadList(std::ifstream *textFile, std::ifstream *dictionary, std::ofstream 
 	
 	while(std::getline(*textFile, newString, '\n'))
 	{
+		boost::algorithm::to_lower(newString);	
 		tokenizer toks{newString, sep};
 		for(tokenizer::iterator tok_iter = toks.begin(); tok_iter != toks.end(); tok_iter++)
 		{
@@ -270,12 +275,15 @@ bool loadList(std::ifstream *textFile, std::ifstream *dictionary, std::ofstream 
 bool checkVector(std::vector<std::string> *text, std::vector<std::string> *dict, std::ofstream *outputFile)
 {
 	std::map<std::string, int> wordCount;
+	std::map<std::string, int> noMatch;
 	std::string textString;
 	std::string dictString;
-	
+	bool match;
+
 	for(size_t i = 0; i < text->size(); i++)
 	{
 		textString = (*text)[i];
+		match = false;
 		for(size_t i = 0; i < dict->size(); i++)
 		{
 			dictString = (*dict)[i];
@@ -287,24 +295,47 @@ bool checkVector(std::vector<std::string> *text, std::vector<std::string> *dict,
 				{
 					++wordCount[textString];
 				}
+				match = true;
+				break;
+			}
+		}
+		if(match == false)
+		{
+			std::pair<std::map<std::string, int>::iterator,bool> uniqueString;
+			uniqueString = noMatch.insert(std::pair<std::string, int>(textString, 1));
+			if(uniqueString.second == false)
+			{
+				++noMatch[textString];
 			}
 		}
 	} 
-	for (std::map<std::string, int>::iterator it= wordCount.begin(); it!= wordCount.end(); ++it)
+	*outputFile << "Word Count\n";
+	*outputFile << "==========\n";
+	std::map<std::string, int>::iterator map_iter;
+	for (map_iter= wordCount.begin(); map_iter!= wordCount.end(); ++map_iter)
 	{
-    		*outputFile << it->first << ": " << it->second << '\n';
+    		*outputFile << map_iter->first << ": " << map_iter->second << '\n';
+	}
+	*outputFile << "\n\nFuzzy word list\n";
+	*outputFile << "===============\n";
+	for( map_iter = noMatch.begin(); map_iter != noMatch.end(); ++map_iter)
+	{
+		*outputFile << map_iter->first << " was not found in the dictionary. Similar words: "  << "\n";
 	}
 	return true;
 }
 bool checkSet(std::multiset<std::string> *text, std::multiset<std::string> *dict, std::ofstream *outputFile)
 {
 	std::map<std::string, int> wordCount;
+	std::map<std::string, int> noMatch;
 	std::string textString;
 	std::string dictString;
-	
+	bool match;
+
 	for(std::multiset<std::string>::iterator text_iter = text->begin(); text_iter != text->end(); text_iter++)
 	{
 		textString = *text_iter;
+		match = false;
 		for(std::multiset<std::string>::iterator dict_iter = dict->begin(); dict_iter != dict->end(); dict_iter++)
 		{
 			dictString = *dict_iter;
@@ -316,24 +347,47 @@ bool checkSet(std::multiset<std::string> *text, std::multiset<std::string> *dict
 				{
 					++wordCount[textString];
 				}
+				match = true;
+				break;
+			}
+		}
+		if(match == false)
+		{
+			std::pair<std::map<std::string, int>::iterator,bool> uniqueString;
+			uniqueString = noMatch.insert(std::pair<std::string, int>(textString, 1));
+			if(uniqueString.second == false)
+			{
+				++noMatch[textString];
 			}
 		}
 	} 
-	for (std::map<std::string, int>::iterator it= wordCount.begin(); it!= wordCount.end(); ++it)
+	*outputFile << "Word Count\n";
+	*outputFile << "==========\n";
+	std::map<std::string, int>::iterator map_iter;
+	for (map_iter= wordCount.begin(); map_iter!= wordCount.end(); ++map_iter)
 	{
-    		*outputFile << it->first << ": " << it->second << '\n';
+    		*outputFile << map_iter->first << ": " << map_iter->second << '\n';
+	}
+	*outputFile << "\n\nFuzzy word list\n";
+	*outputFile << "===============\n";
+	for( map_iter = noMatch.begin(); map_iter != noMatch.end(); ++map_iter)
+	{
+		*outputFile << map_iter->first << " was not found in the dictionary. Similar words: "  << "\n";
 	}
 	return true;
 }
 bool checkList(std::list<std::string> *text, std::list<std::string> *dict, std::ofstream *outputFile)
 {
 	std::map<std::string, int> wordCount;
+	std::map<std::string, int> noMatch;
 	std::string textString;
 	std::string dictString;
+	bool match;
 	
 	for(std::list<std::string>::iterator text_iter = text->begin(); text_iter != text->end(); text_iter++)
 	{
 		textString = *text_iter;
+		match = false;
 		for(std::list<std::string>::iterator dict_iter = dict->begin(); dict_iter != dict->end(); dict_iter++)
 		{
 			dictString = *dict_iter;
@@ -345,12 +399,32 @@ bool checkList(std::list<std::string> *text, std::list<std::string> *dict, std::
 				{
 					++wordCount[textString];
 				}
+				match = true;
+				break;
+			}
+		}
+		if(match == false)
+		{
+			std::pair<std::map<std::string, int>::iterator,bool> uniqueString;
+			uniqueString = noMatch.insert(std::pair<std::string, int>(textString, 1));
+			if(uniqueString.second == false)
+			{
+				++noMatch[textString];
 			}
 		}
 	} 
-	for (std::map<std::string, int>::iterator it= wordCount.begin(); it!= wordCount.end(); ++it)
+	*outputFile << "Word Count\n";
+	*outputFile << "==========\n";
+	std::map<std::string, int>::iterator map_iter;
+	for (map_iter = wordCount.begin(); map_iter!= wordCount.end(); ++map_iter)
 	{
-    		*outputFile << it->first << ": " << it->second << '\n';
+    		*outputFile << map_iter->first << ": " << map_iter->second << '\n';
+	}
+	*outputFile << "\n\nFuzzy word list\n";
+	*outputFile << "===============\n";
+	for( map_iter = noMatch.begin(); map_iter != noMatch.end(); ++map_iter)
+	{
+		*outputFile << map_iter->first << " was not found in the dictionary. Similar words: "  << "\n";
 	}
 	return true;
 }
