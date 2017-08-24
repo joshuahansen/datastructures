@@ -1,6 +1,6 @@
 /***********************************************************************
 *	COSC1254 - PROGRAMMING USING C++
-*	SEMESTER 1 2017
+*	SEMESTER 2 2017
 *	ASSIGNMENT 1 - DATA STRUCTURES
 *	NAME:		JOSHUA HANSEN
 *	STUDENT NUMBER: S3589185
@@ -22,7 +22,7 @@
 #include "custom_list.h"
 #include "custom_tree.h"
 #include "loadDatastructures.h"
-//#include "edit_dist.h"
+#include "edit_dist.h"
 
 typedef std::array<std::string, 5> sArray5;
 

@@ -1,6 +1,6 @@
 /***********************************************************************
 *	COSC1254 - PROGRAMMING USING C++
-*	SEMESTER 1 2017
+*	SEMESTER 2 2017
 *	ASSIGNMENT 1 - DATA STRUCTURES
 *	NAME:		JOSHUA HANSEN
 *	STUDENT NUMBER: S3589185
@@ -21,6 +21,7 @@
 #include <boost/algorithm/string.hpp>
 #include "custom_list.h"
 #include "custom_tree.h"
+#include "edit_dist.h"
 
 bool loadCustomList(std::ifstream *textFile, std::ifstream *dictionary, std::ofstream *outputfile);
 

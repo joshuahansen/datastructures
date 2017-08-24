@@ -1,6 +1,6 @@
 /***********************************************************************
 *	COSC1254 - PROGRAMMING USING C++
-*	SEMESTER 1 2017
+*	SEMESTER 2 2017
 *	ASSIGNMENT 1 - DATA STRUCTURES
 *	NAME:		JOSHUA HANSEN
 *	STUDENT NUMBER: S3589185
@@ -54,9 +54,46 @@ void check(datastructure *text, datastructure *dict, std::ofstream *outputFile)
 	}
 	*outputFile << "\n\nFuzzy word list\n";
 	*outputFile << "===============\n";
+	std::vector<edit_distance> edits;
+	edit_distance newEdit;
 	for( map_iter = noMatch.begin(); map_iter != noMatch.end(); ++map_iter)
 	{
-		*outputFile << map_iter->first << " was not found in the dictionary. Similar words: "  << "\n";
+		for(typename datastructure::iterator dict_iter = dict->begin(); dict_iter != dict->end(); dict_iter++)
+		{
+			dictString = *dict_iter;
+			newEdit = calculateDistance(dictString, map_iter->first);
+			if(edits.empty())
+			{
+				edits.push_back(newEdit);
+			}
+			else
+			{
+				if(edits[0].distance == newEdit.distance)
+				{
+					edits.push_back(newEdit);
+				}
+				else if(edits[0].distance < newEdit.distance)
+				{
+					continue;
+				}
+				else
+				{
+					edits.clear();
+					edits.push_back(newEdit);
+				}
+			}
+		}
+		*outputFile << map_iter->first << " was not found in the dictionary. Similar words: ";
+		for(size_t i = 0; i < edits.size(); ++i)
+		{
+			*outputFile << edits[i].string;
+			if(edits.size() > 1)
+			{
+				*outputFile << ", ";
+			}
+		}
+		*outputFile << " : " << edits[0].distance << std::endl;
+		edits.clear();
 	}
 }
 bool loadCustomList(std::ifstream *textFile, std::ifstream *dictionary, std::ofstream *outputFile)

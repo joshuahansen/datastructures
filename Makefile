@@ -1,6 +1,6 @@
 #######################################################################
 #	COSC1254 - PROGRAMMING USING C++
-#	SEMESTER 1 2017
+#	SEMESTER 2 2017
 #	ASSIGNMENT 1 - DATA STRUCTURES
 #	NAME:		JOSHUA HANSEN
 #	STUDENT NUMBER: S3589185
@@ -22,7 +22,7 @@ OUTPUT2 = files/word_count2.csv
 OUTPUT3 = files/word_count3.csv
 OUTPUT4 = files/word_count4.csv
 OUTPUT5 = files/word_count5.csv
-MAIN = datastructures.cpp loadDatastructures.cpp
+MAIN = datastructures.cpp loadDatastructures.cpp edit_dist.cpp
 PROG = test_datastructures
 RUN = ./
 CUSTOM_LIST = custom_list
@@ -43,13 +43,13 @@ custom_tree:
 	$(RUN)$(PROG) $(SFLAG) $(CUSTOM_TREE) $(DFLAG) $(SHUF_DICT) $(TFLAG) $(FILE_1) $(OFLAG) $(OUTPUT2)
 
 vector:
-	$(RUN)$(PROG) $(SFLAG) $(VECTOR) $(DFLAG) $(DICT) $(TFLAG) $(FILE_1) $(OFLAG) $(OUTPUT3)
+	$(RUN)$(PROG) $(SFLAG) $(VECTOR) $(DFLAG) $(DICT) $(TFLAG) $(FILE_2) $(OFLAG) $(OUTPUT3)
 
 set:
-	$(RUN)$(PROG) $(SFLAG) $(SET) $(DFLAG) $(DICT) $(TFLAG) $(FILE_1) $(OFLAG) $(OUTPUT4)
+	$(RUN)$(PROG) $(SFLAG) $(SET) $(DFLAG) $(DICT) $(TFLAG) $(FILE_2) $(OFLAG) $(OUTPUT4)
 
 list:
-	$(RUN)$(PROG) $(SFLAG) $(LIST) $(DFLAG) $(DICT) $(TFLAG) $(FILE_1) $(OFLAG) $(OUTPUT5)
+	$(RUN)$(PROG) $(SFLAG) $(LIST) $(DFLAG) $(DICT) $(TFLAG) $(FILE_2) $(OFLAG) $(OUTPUT5)
 
 clean:
-	rm $(PROG) $(OUTPUT)
+	rm $(PROG) $(OUTPUT) $(OUTPUT2) $(OUTPUT3) $(OUTPUT4) $(OUTPUT5)
