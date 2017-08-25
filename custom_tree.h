@@ -13,8 +13,16 @@
 #include <iostream>
 #include <boost/algorithm/string.hpp>
 
+/*
+ * definition of custom_tree class and its functions
+ */
 class custom_tree
 {
+	/*
+	 * definition of a node class and its functions
+	 * each node keeps track of number of times the string is repeated to keep
+	 * the tree smaller and avoid having duplicates.
+	 */
 	class node
 	{
 		std::unique_ptr<node> lChild;
@@ -144,6 +152,10 @@ class custom_tree
 			print(currentNode->getRight());
 		}
 	}
+	/*
+	 * recursively searches the tree until it finds the search node.
+	 * if its found its added to word count map otherwise added to noMatch map
+	 */
 	void search(node *currentNode, node *searchNode, std::map<std::string, int> *wordCount,
 		       	std::ofstream *outputFile, std::map<std::string, int> *noMatch)
 	{
@@ -165,6 +177,9 @@ class custom_tree
 		}
 				
 	}
+	/*
+	 * runs search on every node in the tree recursively
+	 */
 	void checkFullTree(node *currentNode, node *dictRoot, std::map<std::string, int> *wordCount, 
 			std::ofstream *outputFile, std::map<std::string, int> *noMatch)
 	{
@@ -172,13 +187,18 @@ class custom_tree
 		{
 			search(dictRoot, currentNode, wordCount, outputFile, noMatch);
 		
-			//print left branch
+			//check left branch
 			checkFullTree(currentNode->getLeft(), dictRoot, wordCount, outputFile, noMatch);
 
-			//print right branch
+			//check right branch
 			checkFullTree(currentNode->getRight(), dictRoot, wordCount, outputFile, noMatch);
 		}
 	}
+	/*
+	 * checks the tree against the dictionary tree
+	 * calls checkFullTree to recursively check all nodes of the tree
+	 * Then calls fuzzyWords to check for edit distances
+	 */
 	void checkTree(custom_tree *dict, std::ofstream *outputFile)
 	{
 		std::map<std::string, int> wordCount;
@@ -198,6 +218,11 @@ class custom_tree
 
 		fuzzyWords(dict, &noMatch, outputFile);
 	}
+	/*
+	 * recursively checks the dictionary file and calculates the edit distance of the fuzzy String 
+	 * with each word in the dictionary.
+	 * Only keep the words with the smallest edit distance 
+	 */
 	void checkDict(node *currentNode, std::string fuzzyString, std::vector<edit_distance> *edits)
 	{
 		edit_distance newEdit;
@@ -234,7 +259,10 @@ class custom_tree
 			}
 		}
 	}
-	
+	/*
+	 * check the list of words not in the dictionary and find the closest fuzzy matches calling 
+	 * the recursive functions to do the full dictionary tree
+	 */
 	void fuzzyWords(custom_tree *dict, std::map<std::string, int> *noMatch, std::ofstream *outputFile)
 	{
 		std::vector<edit_distance> edits;

@@ -16,8 +16,14 @@
 #include <map>
 #include "edit_dist.h"
 
+/*
+ * Define custom_list class and its functions
+ */
 class custom_list 
 {
+	/*
+	 * Define a node class for the custom_list class
+	 */
 	class node
 	{
 		std::unique_ptr<node> next;
@@ -55,6 +61,10 @@ class custom_list
 	
 	std::size_t size;
 	std::unique_ptr<node> head;
+	/*
+	 * vector to hold all the node pointers to release them after list is finished
+	 * this is needed as there is a segmentation fault for large text files
+	 */
 	std::vector<node *> node_ptr;
 
 	public:
@@ -100,6 +110,9 @@ class custom_list
 	{
 		return head.get();
 	}
+	/*
+	 * check the list against a different list
+	 */
 	void checkList(custom_list *dict, std::ofstream *outputFile)
 	{
 		std::map<std::string, int> wordCount;
@@ -151,15 +164,11 @@ class custom_list
 		{
 			*outputFile << map_iter->first << ": " << map_iter->second << "\n";
 		}
-//		std::cout << noMatch.size() << std::endl;
-//		*outputFile << "\n\nFuzzy word list\n";
-//		*outputFile << "===============\n";
-//		for( map_iter = noMatch.begin(); map_iter != noMatch.end(); ++map_iter)
-//		{
-//			*outputFile << map_iter->first << " was not found in the dictionary. Similar words: "  << "\n";
-//		}
 		fuzzyWords(dict, &noMatch, outputFile);
 	}
+	/*
+	 * free the list pointers to avoid segmentation fault from a stack overflow
+	 */
 	void freeList()
 	{
 		std::cout << "Free List" << std::endl;
@@ -169,6 +178,10 @@ class custom_list
 		}	
 		std::cout << "Free list complete" << std::endl;
 	}
+	/*
+	 * check the list of words not found in the dictionary and print to the output file the closest fuzzy words
+	 * These are the words with the lowest edit distance
+	 */
 	void fuzzyWords(custom_list *dict, std::map<std::string, int> *noMatch, std::ofstream *outputFile)
 	{
 		node *current = dict->getHead();
@@ -176,34 +189,44 @@ class custom_list
 		std::vector<edit_distance> edits;
 		edit_distance newEdit;
 
-		std::cout << noMatch->size() << std::endl;
 		*outputFile << "\n\nFuzzy word list\n";
 		*outputFile << "===============\n";
 		for(std::map<std::string, int>::iterator map_iter = noMatch->begin(); map_iter != noMatch->end(); ++map_iter)
 		{
 			current = dict->getHead();
 			while(current != nullptr)
-//			for(typename datastructure::iterator dict_iter = dict->begin(); dict_iter != dict->end(); dict_iter++)
 			{
 				dictString = current->getData();
-				std::cout << dictString << " " << map_iter->first << std::endl;
 				newEdit = calculateDistance(dictString, map_iter->first);
-				std::cout << newEdit.string << " " << newEdit.distance <<std::endl;
+				/*
+				 *if list of words is empty and new word
+				 */
 				if(edits.empty())
 				{
 					edits.push_back(newEdit);
 				}
 				else
 				{
+					/*
+					 * if the words have the same edit distance add new 
+					 * word to end of vector
+					 */
 					if(edits[0].distance == newEdit.distance)
 					{
 						edits.push_back(newEdit);
 					}
+					/*
+					 * if new edit distance is greater than the current ones dont add
+					 */
 					else if(edits[0].distance < newEdit.distance)
 					{
 						current = current->getNext();
 						continue;
 					}
+					/*
+					 * if new edit distance is less than current edit distances
+					 * clear vector and and new edit distance
+					 */
 					else
 					{
 						edits.clear();
@@ -211,7 +234,6 @@ class custom_list
 					}
 				}
 				current = current->getNext();
-				std::cout << current << std::endl;
 			}
 			*outputFile << map_iter->first << " was not found in the dictionary. Similar words: ";
 			for(size_t i = 0; i < edits.size(); ++i)

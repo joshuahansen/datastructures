@@ -17,6 +17,7 @@
  * 	m[i - 1,j] + 1,
  * 	m[i, j - 1] + 1}
  * 	return m [|s1|,|s2|]*/
+
 #include "edit_dist.h"
 /*
  * Calculate the edit distance bewteen 2 words and return a struct of the string 
@@ -26,10 +27,8 @@
 edit_distance calculateDistance(std::string dictString, std::string textString)
 {
 	int edit_dist[100][100];
-	std::vector<char> dictChar(dictString.c_str(), dictString.c_str() + dictString.size());
-	std::vector<char> textChar(textString.c_str(), textString.c_str() + textString.size());
 	int i, j, temp, tracker;
-	int dictLength = dictChar.size(), textLength = textChar.size();
+	int dictLength = dictString.length(), textLength = textString.length();
 
 	for(i = 0; i <= dictLength; ++i)
 	{
@@ -43,7 +42,7 @@ edit_distance calculateDistance(std::string dictString, std::string textString)
 	{
 		for(i = 1; i <= textLength; ++i)
 		{
-			if(dictChar[i-1] == textChar[j-1])
+			if(dictString[i-1] == textString[j-1])
 			{
 				tracker = 0;
 			}
