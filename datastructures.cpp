@@ -28,6 +28,10 @@ int main(int argc, char* argv[])
 		std::ifstream textFile;
 		std::ofstream outputFile;
 
+		/*
+		 * Using boost program options to read the 
+		 * command line arguments
+		 */
 		boost::program_options::options_description progOpt("Options");
 		progOpt.add_options()
 			(",s", boost::program_options::value<std::string>(&datastruct)->required(), "Datastructure")
@@ -46,6 +50,9 @@ int main(int argc, char* argv[])
 	std::cout << "DEBUG: COMPLETE" << std::endl;
 	return 0;
 }
+/*
+ * Open files for reading and writting
+ */ 
 bool loadFiles(std::ifstream *dictionary, std::string dictOpt,
 		std::ifstream *textFile, std::string textOpt, std::ofstream *outputFile, std::string outputOpt)
 {
@@ -73,6 +80,9 @@ bool loadFiles(std::ifstream *dictionary, std::string dictOpt,
 	}
 	return true;
 }
+/*
+ * Load text files into datastructure specified in command argument
+ */
 bool loadDatastruct(std::string datastruct, std::ifstream *dictionary, 
 		std::ifstream *textFile, std::ofstream *outputFile, const sArray5 ds)
 {
@@ -98,7 +108,6 @@ bool loadDatastruct(std::string datastruct, std::ifstream *dictionary,
 	}
 	else
 	{
-		std::cout << "DEBUG DATASTRUCTURE COMPLETE" << std::endl;
 		return false;
 	}
 }

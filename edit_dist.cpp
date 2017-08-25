@@ -18,7 +18,11 @@
  * 	m[i, j - 1] + 1}
  * 	return m [|s1|,|s2|]*/
 #include "edit_dist.h"
-
+/*
+ * Calculate the edit distance bewteen 2 words and return a struct of the string 
+ * from the dictionary and also the edit distance between the text word and 
+ * the dictionary word
+ */
 edit_distance calculateDistance(std::string dictString, std::string textString)
 {
 	int edit_dist[100][100];

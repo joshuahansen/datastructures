@@ -7,6 +7,12 @@
 ************************************************************************/
 #include "loadDatastructures.h"
 
+/*
+ * Used template with typename datastructures so the same check function
+ * can be used with the different std datastructures vector, set and list
+ * First checks file against dictionary to see if word is in there then checks edit distance 
+ * for cclosest match
+ */
 template <typename datastructure>
 void check(datastructure *text, datastructure *dict, std::ofstream *outputFile)
 {

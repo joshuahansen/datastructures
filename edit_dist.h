@@ -14,6 +14,9 @@
 #include <math.h>
 #define MIN(x,y) ((x) < (y) ? (x) : (y))
 
+/*
+ * Difine edit_distance struct as a type
+ */
 typedef struct edit_distance
 {
 	std::string string;

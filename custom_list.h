@@ -14,6 +14,7 @@
 #include <boost/tokenizer.hpp>
 #include <boost/algorithm/string.hpp>
 #include <map>
+#include "edit_dist.h"
 
 class custom_list 
 {
@@ -142,7 +143,7 @@ class custom_list
 			}
 			textCurrent = textCurrent->getNext();
 		}
-		std::cout << wordCount.size() << std::endl;
+		
 		*outputFile << "Word Count\n";
 		*outputFile << "==========\n";
 		std::map<std::string, int>::iterator map_iter;
@@ -150,13 +151,14 @@ class custom_list
 		{
 			*outputFile << map_iter->first << ": " << map_iter->second << "\n";
 		}
-		std::cout << noMatch.size() << std::endl;
-		*outputFile << "\n\nFuzzy word list\n";
-		*outputFile << "===============\n";
-		for( map_iter = noMatch.begin(); map_iter != noMatch.end(); ++map_iter)
-		{
-			*outputFile << map_iter->first << " was not found in the dictionary. Similar words: "  << "\n";
-		}
+//		std::cout << noMatch.size() << std::endl;
+//		*outputFile << "\n\nFuzzy word list\n";
+//		*outputFile << "===============\n";
+//		for( map_iter = noMatch.begin(); map_iter != noMatch.end(); ++map_iter)
+//		{
+//			*outputFile << map_iter->first << " was not found in the dictionary. Similar words: "  << "\n";
+//		}
+		fuzzyWords(dict, &noMatch, outputFile);
 	}
 	void freeList()
 	{
@@ -166,6 +168,63 @@ class custom_list
 			node_ptr[i]->release();
 		}	
 		std::cout << "Free list complete" << std::endl;
+	}
+	void fuzzyWords(custom_list *dict, std::map<std::string, int> *noMatch, std::ofstream *outputFile)
+	{
+		node *current = dict->getHead();
+		std::string dictString;
+		std::vector<edit_distance> edits;
+		edit_distance newEdit;
+
+		std::cout << noMatch->size() << std::endl;
+		*outputFile << "\n\nFuzzy word list\n";
+		*outputFile << "===============\n";
+		for(std::map<std::string, int>::iterator map_iter = noMatch->begin(); map_iter != noMatch->end(); ++map_iter)
+		{
+			current = dict->getHead();
+			while(current != nullptr)
+//			for(typename datastructure::iterator dict_iter = dict->begin(); dict_iter != dict->end(); dict_iter++)
+			{
+				dictString = current->getData();
+				std::cout << dictString << " " << map_iter->first << std::endl;
+				newEdit = calculateDistance(dictString, map_iter->first);
+				std::cout << newEdit.string << " " << newEdit.distance <<std::endl;
+				if(edits.empty())
+				{
+					edits.push_back(newEdit);
+				}
+				else
+				{
+					if(edits[0].distance == newEdit.distance)
+					{
+						edits.push_back(newEdit);
+					}
+					else if(edits[0].distance < newEdit.distance)
+					{
+						current = current->getNext();
+						continue;
+					}
+					else
+					{
+						edits.clear();
+						edits.push_back(newEdit);
+					}
+				}
+				current = current->getNext();
+				std::cout << current << std::endl;
+			}
+			*outputFile << map_iter->first << " was not found in the dictionary. Similar words: ";
+			for(size_t i = 0; i < edits.size(); ++i)
+			{
+				*outputFile << edits[i].string;
+				if(edits.size() > 1)
+				{
+					*outputFile << ", ";
+				}
+			}
+			*outputFile << " : " << edits[0].distance << std::endl;
+			edits.clear();
+		}
 	}
 };
 #endif

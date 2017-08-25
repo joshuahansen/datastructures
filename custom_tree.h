@@ -162,7 +162,6 @@ class custom_tree
 		else
 		{
 			noMatch->insert(std::pair<std::string, int>(searchNode->getData(), searchNode->getNoReps()));
-//			*outputFile std::cout << "WORD: " << searchNode->getData() << " Not in dictionary\n";
 		}
 				
 	}
@@ -180,14 +179,14 @@ class custom_tree
 			checkFullTree(currentNode->getRight(), dictRoot, wordCount, outputFile, noMatch);
 		}
 	}
-	void checkTree(custom_tree *text, std::ofstream *outputFile)
+	void checkTree(custom_tree *dict, std::ofstream *outputFile)
 	{
 		std::map<std::string, int> wordCount;
 		std::map<std::string, int> noMatch;
-		node *dictCurrent = root.get();
-		node *textCurrent = text->getRoot();
+		node *dictRoot = dict->getRoot();
+		node *textRoot = root.get();
 		
-		checkFullTree(dictCurrent, textCurrent, &wordCount, outputFile, &noMatch);
+		checkFullTree(textRoot, dictRoot, &wordCount, outputFile, &noMatch);
 		
 		std::map<std::string, int>::iterator map_iter;
 		*outputFile << "Word Count\n";
@@ -196,13 +195,68 @@ class custom_tree
 		{
 			*outputFile << map_iter->first << ": " << map_iter->second << "\n";
 		}
+
+		fuzzyWords(dict, &noMatch, outputFile);
+	}
+	void checkDict(node *currentNode, std::string fuzzyString, std::vector<edit_distance> *edits)
+	{
+		edit_distance newEdit;
+		if(currentNode != nullptr)
+		{
+			newEdit = calculateDistance(currentNode->getData(), fuzzyString);
+			if(edits->empty())
+			{
+				edits->push_back(newEdit);
+			}
+			else
+			{
+				if((*edits)[0].distance == newEdit.distance)
+				{
+					edits->push_back(newEdit);
+				}
+				else if((*edits)[0].distance < newEdit.distance)
+				{
+					//do nothing
+				}
+				else
+				{
+					edits->clear();
+					edits->push_back(newEdit);
+				}
+			}
+			if(currentNode->getLeft() != nullptr)
+			{
+				checkDict(currentNode->getLeft(), fuzzyString, edits);
+			}
+			if(currentNode->getRight() != nullptr)
+			{
+				checkDict(currentNode->getRight(), fuzzyString, edits);
+			}
+		}
+	}
+	
+	void fuzzyWords(custom_tree *dict, std::map<std::string, int> *noMatch, std::ofstream *outputFile)
+	{
+		std::vector<edit_distance> edits;
+
 		*outputFile << "\n\nFuzzy word list\n";
 		*outputFile << "===============\n";
-		for(map_iter = noMatch.begin(); map_iter != noMatch.end(); ++map_iter)
+		for(std::map<std::string, int>::iterator map_iter = noMatch->begin(); map_iter != noMatch->end(); ++map_iter)
 		{
-			*outputFile << map_iter->first << " was not found in the dictionary. Similar words: "  << "\n";
+			checkDict(dict->getRoot(), map_iter->first, &edits);
+			
+			*outputFile << map_iter->first << " was not found in the dictionary. Similar words: ";
+			for(size_t i = 0; i < edits.size(); ++i)
+			{
+				*outputFile << edits[i].string;
+				if(edits.size() > 1)
+				{
+					*outputFile << ", ";
+				}
+			}
+			*outputFile << " : " << edits[0].distance << std::endl;
+			edits.clear();
 		}
-
 	}
 };
 #endif
