@@ -11,7 +11,7 @@
  * Used template with typename datastructures so the same check function
  * can be used with the different std datastructures vector, set and list
  * First checks file against dictionary to see if word is in there then checks edit distance 
- * for cclosest match
+ * for closest match
  */
 template <typename datastructure>
 void check(datastructure *text, datastructure *dict, std::ofstream *outputFile)
@@ -62,6 +62,9 @@ void check(datastructure *text, datastructure *dict, std::ofstream *outputFile)
 	*outputFile << "===============\n";
 	std::vector<edit_distance> edits;
 	edit_distance newEdit;
+	/*
+	 * Calculate the edit distance for each word not in the dictionary
+	 */
 	for( map_iter = noMatch.begin(); map_iter != noMatch.end(); ++map_iter)
 	{
 		for(typename datastructure::iterator dict_iter = dict->begin(); dict_iter != dict->end(); dict_iter++)
@@ -102,6 +105,10 @@ void check(datastructure *text, datastructure *dict, std::ofstream *outputFile)
 		edits.clear();
 	}
 }
+/*
+ * Load the content of the text file and dictionary file into custom_list class and call the
+ * checkList fuction on the text list.
+ */ 
 bool loadCustomList(std::ifstream *textFile, std::ifstream *dictionary, std::ofstream *outputFile)
 {
 	auto start = std::chrono::high_resolution_clock::now();
@@ -143,6 +150,9 @@ bool loadCustomList(std::ifstream *textFile, std::ifstream *dictionary, std::ofs
 	textList.freeList();
 	return true;
 }
+/*
+ * Loads thel text files into custom_tree datasturctures and calls checkTree function on the text tree
+ */
 bool loadCustomTree(std::ifstream *textFile, std::ifstream *dictionary, std::ofstream *outputFile)
 {
 	auto start = std::chrono::high_resolution_clock::now();
@@ -175,6 +185,9 @@ bool loadCustomTree(std::ifstream *textFile, std::ifstream *dictionary, std::ofs
 	std::cout << "Time Elapsed: " << elapsed.count() << std::endl;
 	return true;
 }
+/*
+ * Loads files into std::vector and checks text file against dictionary
+ */
 bool loadVector(std::ifstream *textFile, std::ifstream *dictionary, std::ofstream *outputFile)
 {
 	auto start = std::chrono::high_resolution_clock::now();
@@ -207,6 +220,9 @@ bool loadVector(std::ifstream *textFile, std::ifstream *dictionary, std::ofstrea
 	std::cout << "Time Elapsed: " << elapsed.count() << std::endl;
 	return true;
 }
+/*
+ * Loads files into std::multiset and checks text file against dictionary
+ */
 bool loadSet(std::ifstream *textFile, std::ifstream *dictionary, std::ofstream *outputFile)
 {
 	auto start = std::chrono::high_resolution_clock::now();
@@ -240,6 +256,9 @@ bool loadSet(std::ifstream *textFile, std::ifstream *dictionary, std::ofstream *
 	std::cout << "Time Elapsed: " << elapsed.count() << std::endl;
 	return true;
 }
+/*
+ * Loads files into std::list and checks text file against dictionary
+ */
 bool loadList(std::ifstream *textFile, std::ifstream *dictionary, std::ofstream *outputFile)
 {
 	auto start = std::chrono::high_resolution_clock::now();
