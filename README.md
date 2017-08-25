@@ -4,7 +4,7 @@
 #	NAME:		JOSHUA HANSEN
 #	STUDENT NUMBER: S3589185
 
-- is not listed as a delimter therefor the list of words in the not found list 
+hyphen (-) is not listed as a delimter therefor the list of words in the not found list 
 contains words starting with the hyphen
 
 some of the datastructures reorder the fuzzy word matches so running diff on the 
